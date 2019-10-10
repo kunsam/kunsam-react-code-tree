@@ -11,7 +11,9 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:kReactCodeTree"
+    "onView:kReactCodeTree",
+    "onCommand:kReactCodeTree.gotoRelative",
+    "onCommand:extension.selectBracket"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -50,8 +52,12 @@
         "title": "Insert After"
       },
       {
-        "command": "extension.copyCombo",
-        "title": "bracket copyCombo"
+        "command": "extension.selectBracket",
+        "title": "select bracket"
+      },
+      {
+        "command": "kReactCodeTree.gotoRelative",
+        "title": "Go to Relative import"
       },
       {
         "command": "kReactCodeTree.insertIn",
@@ -80,9 +86,15 @@
     ],
     "keybindings": [
       {
-        "command": "extension.copyCombo",
-        "key": "ctrl+i ctrl+i",
+        "command": "extension.selectBracket",
+        "key": "alt+a",
+        "mac": "alt+a",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "kReactCodeTree.gotoRelative",
         "mac": "cmd+i cmd+i",
+        "key": "ctrl+i ctrl+i",
         "when": "editorTextFocus"
       }
     ],

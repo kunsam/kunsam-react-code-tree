@@ -7,6 +7,8 @@ import { KRouterTree } from './routerTree';
 import NodeFlowsUtil from './nodeFlowsUtil';
 import { NodeFlowsView } from "./nodeFlowsView";
 import { RouterTreeView } from './routerTreeView';
+import { selectText } from './select';
+import { getFileAbsolutePath, GotoTextDocument } from './extensionUtil';
 
 const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
 
@@ -14,16 +16,17 @@ export function activate(context: vscode.ExtensionContext) {
 
   const nodeFlowsView = new NodeFlowsView();
 
-
   // 复制combo 可以搞各种combo放到另一个插件里
-  vscode.commands.registerCommand("extension.copyCombo", () => {
-    vscode.commands.executeCommand("bracket-select.select").then(() => {
-      vscode.commands.executeCommand("editor.action.clipboardCopyAction").then(() => {
-        vscode.window.showInformationMessage('复制成功')
-      })
-    })
+  vscode.commands.registerCommand("kReactCodeTree.gotoRelative", () => {
+    const text = selectText(false)
+    const trueFsPath = getFileAbsolutePath(text)
+    GotoTextDocument(trueFsPath)
+  })
+  vscode.commands.registerCommand("extension.selectBracket", () => {
+    selectText(false);
   })
 
+  
   vscode.commands.registerCommand("kReactCodeTree.refresh", () => {
     vscode.window.showInformationMessage(`kReactCodeTree called refresh.`);
     nodeFlowsView.reset();
@@ -136,31 +139,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand('kReactRouterTree.GotoComponent', (selectedNode: any) => {
     // console.log(selectedNode, 'selectedNode')
     if (selectedNode && selectedNode.componentRelativePath) {
-      // 没带后缀
-      const fsPath = path.resolve(path.join(ROOT_PATH, selectedNode.componentRelativePath));
-      let trueFsPath = ''
-      if (fs.existsSync(fsPath)) {
-        if (fs.statSync(fsPath).isDirectory()) {
-          fs.readdirSync(fsPath).forEach(f => {
-            if (f.includes('index') && /.jsx?|tsx?g$/g.test(f)) {
-              trueFsPath = path.join(fsPath, f);
-            }
-          })
-        } else {
-          trueFsPath = fsPath;
-        }
-      }
-      if (!trueFsPath) {
-        vscode.window.showInformationMessage(`未找到结果`)
-      } else {
-        try {
-          vscode.workspace.openTextDocument(trueFsPath).then((doc) => {
-            vscode.window.showTextDocument(doc)
-          })
-        } catch (e) {
-          vscode.window.showInformationMessage(`无法打开${trueFsPath}`)
-        }
-      }
+      const trueFsPath = getFileAbsolutePath(selectedNode.componentRelativePath)
+      GotoTextDocument(trueFsPath)
     }
   }))
 
