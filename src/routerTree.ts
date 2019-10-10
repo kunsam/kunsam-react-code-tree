@@ -1,9 +1,15 @@
 
 import * as vscode from "vscode";
-
+import * as fs from 'fs';
 
 const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
-const FILE_IMPORTS = require(`${ROOT_PATH}/.vscode/kReactCodeTree/workflows/file_imports.js`)
+
+const FILE_IMPORTS_PATH = `${ROOT_PATH}/.vscode/kReactCodeTree/file_imports.js`;
+if (!fs.existsSync(FILE_IMPORTS_PATH)) {
+	vscode.window.showWarningMessage('plz add file_imports.js')
+	throw new Error();
+}
+const FILE_IMPORTS = require(FILE_IMPORTS_PATH)
 
 const FILE_ROUTERS_MAP: Map<string, string[]> = new Map();
 

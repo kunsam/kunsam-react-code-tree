@@ -87,8 +87,6 @@ export function activate(context: vscode.ExtensionContext) {
     const data = nodeFlowsView.treeDataProvider.topRequirePath(selectedNode);
     try {
       let text = `\nmodule.exports = ${JSON.stringify(data.nodes.map(n => NodeFlowsUtil.dump(n)), null, 2)}`
-      // console.log(data, data.nodes.map(n => NodeFlowsUtil.dump(n)), 'datadatadatadata22')
-      // '/Users/kunsam/Downloads/my-project/wechat-web-for-text/.vscode/kReactCodeTree/workflows/test.js'
       fs.writeFile(data.requirePath, text, () => {
         nodeFlowsView.refresh()
         vscode.window.showInformationMessage('更新成功')
@@ -123,11 +121,8 @@ export function activate(context: vscode.ExtensionContext) {
       });
   }));
 
-  // ROOT_PATH
 
-
-
-  const ROUTER_FILE_RELATIVE_PATH = "/.vscode/kReactCodeTree/workflows/router_config.js";
+  const ROUTER_FILE_RELATIVE_PATH = "/.vscode/kReactCodeTree/router_config.js";
   const ROUTER_FILE_ABS_PATH = `${ROOT_PATH}${ROUTER_FILE_RELATIVE_PATH}`;
   if (!fs.existsSync(ROUTER_FILE_ABS_PATH)) {
     vscode.window.showErrorMessage('未找到路由配置文件')

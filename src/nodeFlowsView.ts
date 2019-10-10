@@ -189,7 +189,10 @@ export class NodeFlowsView {
 					}
 				});
 			});
+		} else {
+			vscode.window.showWarningMessage(`plz add ${CONFIG_FILE_ABS_PATH}`)
 		}
+
 	}
 
 	public get treeDataProvider() {
