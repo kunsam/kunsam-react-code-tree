@@ -1,0 +1,146 @@
+{
+  "name": "kunsam-react-code-tree",
+  "description": "vscode extension with tree provider tool for react app coder",
+  "repository": "https://github.com/kunsam/kunsam-react-code-tree.git",
+  "version": "0.0.1",
+  "publisher": "kunsam",
+  "engines": {
+    "vscode": "^1.38.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:kReactCodeTree"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "kReactCodeTree-explorer",
+          "title": "react代码树",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "views": {
+      "kReactCodeTree-explorer": [
+        {
+          "id": "kReactCodeTree",
+          "name": "k React Code Tree"
+        },
+        {
+          "id": "kReactRouterTree",
+          "name": "k React Router Tree"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "kReactCodeTree.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "kReactCodeTree.insertAfter",
+        "title": "Insert After"
+      },
+      {
+        "command": "extension.copyCombo",
+        "title": "bracket copyCombo"
+      },
+      {
+        "command": "kReactCodeTree.insertIn",
+        "title": "Insert In"
+      },
+      {
+        "command": "kReactCodeTree.editNode",
+        "title": "Edit"
+      },
+      {
+        "command": "kReactRouterTree.GotoComponent",
+        "title": "Go to File"
+      },
+      {
+        "command": "extension.getKReactNodeCode",
+        "title": "* Get kReactCodeTree Node Code"
+      },
+      {
+        "command": "extension.addOpenAsideToContextMenu",
+        "title": "* Open Definition Aside"
+      },
+      {
+        "command": "extension.getFileAppUrl",
+        "title": "* Get File App Url"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.copyCombo",
+        "key": "ctrl+i ctrl+i",
+        "mac": "cmd+i cmd+i",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "commandPalette": [],
+      "view/title": [
+        {
+          "command": "kReactCodeTree.refresh",
+          "when": "view == kReactCodeTree"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "kReactCodeTree.insertAfter",
+          "when": "view == kReactCodeTree"
+        },
+        {
+          "command": "kReactCodeTree.insertIn",
+          "when": "view == kReactCodeTree"
+        },
+        {
+          "command": "kReactCodeTree.editNode",
+          "when": "view == kReactCodeTree"
+        },
+        {
+          "command": "kReactRouterTree.GotoComponent",
+          "when": "view == kReactRouterTree"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "editorTextFocus",
+          "command": "extension.getKReactNodeCode",
+          "group": "navigation@7"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "extension.addOpenAsideToContextMenu",
+          "group": "navigation@6"
+        },
+        {
+          "command": "extension.getFileAppUrl",
+          "title": "Get File App Url",
+          "group": "navigation@5"
+        }
+      ]
+    },
+    "configuration": []
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "add-vscode-type-on-master": "npx vscode-dts master"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.21",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {}
+}
