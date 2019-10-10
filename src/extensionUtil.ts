@@ -11,17 +11,23 @@ export function getFileAbsolutePath(componentRelativePath: string) {
 	let trueFsPath = ''
 	if (fs.existsSync(fsPath)) {
 		if (fs.statSync(fsPath).isDirectory()) {
+			let NoneJSIndexes = [];
 			fs.readdirSync(fsPath).forEach(f => {
 				if (f.includes('index')) {
-					if (/.(jsx?|tsx?)g$/.test(f)) {
+					if (/.(jsx?|tsx?)$/g.test(f)) {
 						trueFsPath = path.join(fsPath, f);
 					} else {
-						if (/.(s?css|less|sass)g$/.test(f)) {
-							trueFsPath = path.join(fsPath, f);
-						}
+						NoneJSIndexes.push(path.join(fsPath, f))
 					}
 				}
 			})
+			if (!trueFsPath && NoneJSIndexes.length) {
+				NoneJSIndexes.forEach((indexPath) => {
+					if (/.(s?css|less|sass)$/g.test(indexPath)) {
+						trueFsPath = indexPath
+					}
+				})
+			}
 		} else {
 			trueFsPath = fsPath;
 		}
