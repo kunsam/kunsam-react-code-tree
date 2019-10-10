@@ -148,7 +148,8 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "add-vscode-type-on-master": "npx vscode-dts master"
+    "add-vscode-type-on-master": "npx vscode-dts master",
+    "publish": "vsce publish minor"
   },
   "devDependencies": {
     "@types/node": "^10.12.21",
