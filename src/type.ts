@@ -29,6 +29,9 @@ export type KC_Node = {
 	symbol?: string // 没有symbol 仅显示文字，点击没用    react项目中可能symbol 会相同
 	// 多次出现以第一个为准
 	text: string
+
+
+
 	document?: string
 	children?: KC_Node[]
 
@@ -47,7 +50,7 @@ export type KC_Node = {
 	parent?: KC_Node;
 
 	iconType?: KC_NODE_ICON_TYPE
-	requirePath?: string // 如果存在，使用 requirePath 加载children
+	requirePath?: string // 如果存在，这个是相对路径(__kReactCodeTree__/workflows/index.js) 使用 requirePath 加载children
 	_id?: string // 自动化生成后反向查找
 }
 

@@ -9,6 +9,7 @@ import { NodeFlowsView } from "./nodeFlowsView";
 import { RouterTreeView } from './routerTreeView';
 import { selectText } from './select';
 import { getFileAbsolutePath, GotoTextDocument } from './extensionUtil';
+import { PROJECT_DIR } from './constant';
 
 const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
 
@@ -125,16 +126,20 @@ export function activate(context: vscode.ExtensionContext) {
   }));
 
 
-  const ROUTER_FILE_RELATIVE_PATH = "/.vscode/kReactCodeTree/router_config.js";
-  const ROUTER_FILE_ABS_PATH = `${ROOT_PATH}${ROUTER_FILE_RELATIVE_PATH}`;
+  const ROUTER_FILE_ABS_PATH = path.join(ROOT_PATH, PROJECT_DIR, '/router_config.js')
   if (!fs.existsSync(ROUTER_FILE_ABS_PATH)) {
     vscode.window.showErrorMessage('未找到路由配置文件')
     return
   }
+
   const routers = require(ROUTER_FILE_ABS_PATH)
   const kRouterTree = new KRouterTree(routers)
   const routerTreeView = new RouterTreeView(kRouterTree)
-
+  vscode.commands.registerCommand("kReactRouterTree.refresh", () => {
+    vscode.window.showInformationMessage(`kReactRouterTree called refresh.`);
+    delete require.cache[require.resolve(ROUTER_FILE_ABS_PATH)]
+    routerTreeView.reset(new KRouterTree(require(ROUTER_FILE_ABS_PATH)));
+  });
 
   context.subscriptions.push(vscode.commands.registerCommand('kReactRouterTree.GotoComponent', (selectedNode: any) => {
     // console.log(selectedNode, 'selectedNode')

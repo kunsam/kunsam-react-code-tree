@@ -3,11 +3,11 @@ import * as path from 'path'
 import * as vscode from "vscode";
 import NodeFlowsUtil from "./nodeFlowsUtil";
 import { KC_Node, KC_NODE_ICON_TYPE } from "./type";
+import { PROJECT_DIR } from "./constant";
 
 
 const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
-const CONFIG_FILE_RELATIVE_PATH = "/.vscode/kReactCodeTree/workflows/index.js";
-const CONFIG_FILE_ABS_PATH = `${ROOT_PATH}${CONFIG_FILE_RELATIVE_PATH}`;
+const CONFIG_FILE_ABS_PATH = path.join(ROOT_PATH, PROJECT_DIR, '/workflows/index.js')
 
 function _getSymbols(
 	data: KC_Node,
@@ -262,10 +262,12 @@ export class KReactCodeTree implements vscode.TreeDataProvider<KC_Node> {
 			element.iconType = KC_NODE_ICON_TYPE.node;
 		}
 		if (element.requirePath) {
+			// __kReactCodeTree__/workflows
+			const truePath = path.join(ROOT_PATH, PROJECT_DIR, '/workflows', element.requirePath)
 			try {
-				element.children = require(element.requirePath)
+				element.children = require(truePath)
 			} catch {
-				vscode.window.showErrorMessage(`${element.requirePath}有误`)
+				vscode.window.showErrorMessage(`${truePath}有误`)
 			}
 		}
 		if (element.children && element.children.length) {

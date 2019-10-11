@@ -48,6 +48,14 @@
         }
       },
       {
+        "command": "kReactRouterTree.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
         "command": "kReactCodeTree.insertAfter",
         "title": "Insert After"
       },
@@ -104,6 +112,10 @@
         {
           "command": "kReactCodeTree.refresh",
           "when": "view == kReactCodeTree"
+        },
+        {
+          "command": "kReactRouterTree.refresh",
+          "when": "view == kReactRouterTree"
         }
       ],
       "view/item/context": [

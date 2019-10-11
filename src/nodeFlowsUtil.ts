@@ -62,7 +62,6 @@ export default class NodeFlowsUtil {
 				_element[key] = element[key]
 			}
 		})
-		// TODO id 方案不好
 		if (element.children && !element.requirePath) {
 			_element.children = element.children.map(c => ({
 				// _id: NodeFlowsUtil.elementId(c),

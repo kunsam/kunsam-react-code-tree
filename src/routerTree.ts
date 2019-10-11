@@ -1,15 +1,7 @@
 
 import * as vscode from "vscode";
-import * as fs from 'fs';
+import { getFileAbsolutePath } from './extensionUtil';
 
-const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
-
-const FILE_IMPORTS_PATH = `${ROOT_PATH}/.vscode/kReactCodeTree/file_imports.js`;
-if (!fs.existsSync(FILE_IMPORTS_PATH)) {
-	vscode.window.showWarningMessage('plz add file_imports.js')
-	throw new Error();
-}
-const FILE_IMPORTS = require(FILE_IMPORTS_PATH)
 
 const FILE_ROUTERS_MAP: Map<string, string[]> = new Map();
 
@@ -20,14 +12,51 @@ export type KRouter = {
 	componentRelativePath: string
 }
 
-function getRelatedFiles(path: string, result: string[] = []) {
-	const _findFile = FILE_IMPORTS.find(p => p.path === path);
-	if (_findFile) {
-		_findFile.imports.forEach(file => {
-			result = result.concat(getRelatedFiles(file, result))
+const FILE_IMPORTS_MAP: Map<string, string[]> = new Map();
+
+function getRelatedFiles(id: string, path: string) {
+	const mapImports = FILE_IMPORTS_MAP.get(path);
+	const imports = mapImports || [];
+
+	if (mapImports) {
+		KRouterTreeItem.setRelatedFiles(id, mapImports)
+		mapImports.forEach(item => {
+			getRelatedFiles(id, item)
 		})
+	} else {
+		const truePath = getFileAbsolutePath(path)
+		if (truePath) {
+			vscode.workspace.openTextDocument(truePath).then(doc => {
+				for (let i = 1; i < doc.lineCount - 1; i++) {
+					const lineText = doc.lineAt(i).text;
+					if (/\sfrom\s\'/.test(lineText)) {
+						const texts = lineText.split(' ')
+						if (texts[texts.length - 1]) {
+							const item = texts[texts.length - 1].replace('\'', '').replace('\"', '');
+							item && imports.push(item);
+						}
+					}
+					if (/import\(\'/.test(lineText)) {
+						const texts = lineText.split('\'')
+						if (texts[1]) {
+							const item = texts[1].replace('\'', '').replace('\"', '');
+							item && imports.push(item);
+						}
+					}
+					if (/function(.+)/.test(lineText) || /export(.+)/.test(lineText)) {
+						break;
+					}
+				}
+				FILE_IMPORTS_MAP.set(path, imports)
+				const relativeImports = imports.filter(i => i.includes('/'));
+				KRouterTreeItem.setRelatedFiles(id, relativeImports)
+				relativeImports.forEach(item => {
+					getRelatedFiles(id, item)
+				})
+			})
+		}
 	}
-	return result
+
 }
 
 
@@ -43,21 +72,20 @@ export class KRouterTreeItem {
 		this.path = node.path || '';
 		this.parentId = parentId;
 		this.componentRelativePath = node.componentRelativePath;
-
 		this.id = (parentId ? parentId + '/' : '') + this.path;
+		this._addToTree(this, node.routers)
+		KRouterTreeItem.setRelatedFiles(this.id, [ node.componentRelativePath ])
+		getRelatedFiles(this.id, node.componentRelativePath)
+	}
 
-		const relatedFiles = [
-			node.componentRelativePath,
-			...getRelatedFiles(node.componentRelativePath)
-		]
+	static setRelatedFiles(id: string, relatedFiles: string[]) {
 		relatedFiles.forEach(r => {
 			if (!FILE_ROUTERS_MAP.has(r)) {
-				FILE_ROUTERS_MAP.set(r, [ this.id ]);
+				FILE_ROUTERS_MAP.set(r, [id]);
 				return;
 			}
-			FILE_ROUTERS_MAP.set(r, FILE_ROUTERS_MAP.get(r).concat([ this.id ]))
+			FILE_ROUTERS_MAP.set(r, FILE_ROUTERS_MAP.get(r).concat([id]))
 		});
-		this._addToTree(this, node.routers)
 	}
 
 	private _addToTree(parent: KRouterTreeItem, routers: KRouter[] = []) {
@@ -76,9 +104,11 @@ export class KRouterTreeItem {
 		}
 		const parentId = parent.id;
 		routers.forEach(r => {
-			const node = new KRouterTreeItem(r, parentId);
-			children.push(node)
-			this._addToTree(node, r.routers)
+			if (r.componentRelativePath) {
+				const node = new KRouterTreeItem(r, parentId);
+				children.push(node)
+				this._addToTree(node, r.routers)
+			}
 		})
 	}
 }
@@ -87,28 +117,19 @@ export class KRouterTreeItem {
 export class KRouterTree {
 
 	private _tree: KRouterTreeItem[] = [];
-	private _treeMap: Map<string, KRouterTreeItem> = new Map();
+	// private _treeMap: Map<string, KRouterTreeItem> = new Map();
 
 	constructor(routers: KRouter[]) {
-		this._tree = routers.map(r => new KRouterTreeItem(r))
-		console.log(this._tree, this._treeMap, 'KRousterTreeItem')
-		FILE_ROUTERS_MAP.forEach((value, key) => {
-			console.log(value, key, 'FILE_ROUTERS_MAP')
-		})
+		this._tree = routers.map(r => r.componentRelativePath && new KRouterTreeItem(r))
 	}
 
 	public queryFileAppUrl(relativePath: string) {
 		const equalPath = relativePath.replace(/\/index.jsx?$/g, '')
-		console.log(equalPath, 'equalPathequalPath')
 		return FILE_ROUTERS_MAP.get(equalPath)
 	}
 
 	public get tree() {
 		return this._tree;
 	}
-
-	// public getRouterItemEntryPath(id: string) {
-
-	// }
 
 }

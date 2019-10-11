@@ -2,7 +2,6 @@ import * as path from 'path'
 import * as vscode from "vscode";
 import { KRouterTreeItem, KRouterTree } from "./routerTree";
 
-
 export class KReactRouterTree implements vscode.TreeDataProvider<KRouterTreeItem> {
 
 	private _tree: KRouterTree;
@@ -26,16 +25,26 @@ export class KReactRouterTree implements vscode.TreeDataProvider<KRouterTreeItem
 			collapsibleState: element.routers.length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
 		}
 	}
+	public reset(tree: KRouterTree) {
+		this._tree = tree;
+		this._onDidChangeTreeData.fire();
+	}
 }
 
 export class RouterTreeView {
+	private _treeDataProvider: KReactRouterTree
 
 	constructor(kRouterTree: KRouterTree) {
 		const treeDataProvider = new KReactRouterTree(kRouterTree)
-		vscode.window.createTreeView("kReactRouterTree", {
+		const view = vscode.window.createTreeView("kReactRouterTree", {
 			treeDataProvider: treeDataProvider,
 			showCollapseAll: true
 		});
+		this._treeDataProvider = treeDataProvider
+	}
+
+	public reset(kRouterTree: KRouterTree) {
+		this._treeDataProvider.reset(kRouterTree)
 	}
 
 }
