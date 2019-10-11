@@ -149,6 +149,37 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }))
 
+
+  // const tRouters: KRouter[] = []
+  // const trueFsPath = getFileAbsolutePath('src/app/router/routerConfig.jsx')
+  // if (trueFsPath) {
+  //   vscode.workspace.openTextDocument(trueFsPath).then(doc => {
+  //     const text = doc.getText().replace(/\n\r/g, '');
+  //     // const texts = text.split('}')
+  //     console.log(text.match(/\[[\s\S]+\]/g), '21312321321'); 
+  //     text.split('export')[1].split('}').forEach(ctext => {
+  //       let data: any = {}
+  //       const pathM = ctext.match(/path:(.+)\'/)
+  //       if (pathM) {
+  //         data.path = pathM[1].replace(/\'\"/g, '')
+  //       }
+  //       const IndexRouteM = ctext.match(/IndexRoute:(.+)/)
+  //       if (IndexRouteM) {
+  //         data.IndexRoute = IndexRouteM[1].replace(/\'\"/g, '')
+  //       }
+  //       const componentM = ctext.replace(/\n\r/g, '').match(/component:\s*lazy\(\(\)\s*\=\>\n*\s*import\(\s*(.+)\'(.|\s)*\)\s*\)/)
+  //       if (componentM) {
+  //         data.componentRelativePath = componentM[1].replace(/\'\"/g, '')
+  //       }
+  //       const routersM = ctext.match(/routers:(.+)/)
+  //       // if (routersM) {
+  //       //   data.routers
+  //       // }
+  //     })
+  //     console.log(tRouters, routers, 'routersrouters');
+  //   })
+  // }
+
   context.subscriptions.push(vscode.commands.registerCommand("extension.getFileAppUrl", (uri: vscode.Uri) => {
     const routers = kRouterTree.queryFileAppUrl(path.relative(ROOT_PATH, uri.fsPath))
     if (routers) {

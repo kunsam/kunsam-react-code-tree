@@ -267,6 +267,7 @@ export class KReactCodeTree implements vscode.TreeDataProvider<KC_Node> {
 			const truePath = path.join(ROOT_PATH, PROJECT_DIR, '/workflows', element.requirePath)
 			try {
 				element.children = require(truePath)
+				delete require.cache[require.resolve(truePath)]
 			} catch {
 				vscode.window.showErrorMessage(`${truePath}有误`)
 			}
