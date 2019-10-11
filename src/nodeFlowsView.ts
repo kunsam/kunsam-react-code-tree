@@ -85,10 +85,11 @@ function getBestMatchingSymbol(data: KC_Node, doc?: vscode.TextDocument): Thenab
 		if (data.symbol) {
 			const symbols = data.symbol.split(".");
 			_getSymbols(data, symbols, 0, [], [], doc).then(symbolResults => {
-				console.log(symbolResults, '_getSymbols results')
+				// console.log(symbolResults, '_getSymbols results')
 				// 打开多个吧
 				if (data.textPattern) {
-					const textPatternLineNumber = data.text.split('#')[1]
+					const pureText = data.textPattern.split('#')[0];
+					const textPatternLineNumber = data.textPattern.split('#')[1]
 					const textPatternLine = textPatternLineNumber !== undefined ? parseInt(textPatternLineNumber) : 1;
 					symbolResults = symbolResults.filter(async (sr) => {
 						const doc = await vscode.workspace.openTextDocument(sr.location.uri)
@@ -97,7 +98,7 @@ function getBestMatchingSymbol(data: KC_Node, doc?: vscode.TextDocument): Thenab
 						let count = 1;
 						for (let i = startLine; i <= endLine; i++) {
 							const text = doc.lineAt(i).text;
-							const textIndex = text.indexOf(data.textPattern);
+							const textIndex = text.indexOf(pureText);
 							if (textIndex >= 0) {
 								if (count === textPatternLine) {
 									sr.location.range = sr.location.range.with(new vscode.Position(i, textIndex), new vscode.Position(i, textIndex + text.length))
@@ -109,7 +110,7 @@ function getBestMatchingSymbol(data: KC_Node, doc?: vscode.TextDocument): Thenab
 						}
 						return false;
 					})
-					console.log(data.textPattern, symbolResults, 'data.textPattern symbolResults')
+					// console.log(data.textPattern, symbolResults, 'data.textPattern symbolResults')
 				}
 				res(symbolResults)
 			})
