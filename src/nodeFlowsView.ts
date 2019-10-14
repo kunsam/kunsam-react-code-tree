@@ -253,15 +253,24 @@ export class KReactCodeTree implements vscode.TreeDataProvider<KC_Node> {
 		this._tree = tree;
 	}
 	private _initTree(element: KC_Node) {
-		if (!element.symbol) {
-			if (element.filePattern) {
-				element.iconType = KC_NODE_ICON_TYPE.file;
+
+		if (!element.iconType) {
+			if (element.children && element.children.length) {
+				element.iconType = KC_NODE_ICON_TYPE.node;
 			} else {
-				element.iconType = KC_NODE_ICON_TYPE.text;
+				if (element.symbol) {
+					element.iconType = KC_NODE_ICON_TYPE.node;
+				} else {
+					if (element.filePattern) {
+						element.iconType = KC_NODE_ICON_TYPE.file;
+					} else {
+						element.iconType = KC_NODE_ICON_TYPE.text;
+					}
+				}
 			}
-		} else {
-			element.iconType = KC_NODE_ICON_TYPE.node;
 		}
+
+
 		if (element.requirePath) {
 			// __kReactCodeTree__/workflows
 			const truePath = path.join(ROOT_PATH, PROJECT_DIR, '/workflows', element.requirePath)
@@ -324,10 +333,11 @@ export class KReactCodeTree implements vscode.TreeDataProvider<KC_Node> {
 		return element.children || [];
 	}
 	public getTreeItem(element: KC_Node): vscode.TreeItem {
+
 		return {
 			label: element.text,
 			// tooltip: '1',
-			...this._getIconPath(element.iconType),
+			...this._getIconPath(element.children && element.children.length ? KC_NODE_ICON_TYPE.node : element.iconType),
 			collapsibleState: element.children && element.children.length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
 		};
 	}
