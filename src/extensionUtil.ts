@@ -5,16 +5,16 @@ import * as vscode from "vscode";
 
 const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
 
-export function getFileAbsolutePath(componentRelativePath: string) {
+export function getFileAbsolutePath(filePath: string, isRelative = true) {
 	// 没带后缀
-	const fsPath = path.resolve(path.join(ROOT_PATH, componentRelativePath));
+	const fsPath = isRelative ? path.resolve(path.join(ROOT_PATH, filePath)) : filePath;
 	let trueFsPath = ''
 	if (fs.existsSync(fsPath)) {
 		if (fs.statSync(fsPath).isDirectory()) {
 			let NoneJSIndexes = [];
 			fs.readdirSync(fsPath).forEach(f => {
 				if (f.includes('index')) {
-					if (/.(jsx?|tsx?)$/g.test(f)) {
+					if (/\.(jsx?|tsx?)$/g.test(f)) {
 						trueFsPath = path.join(fsPath, f);
 					} else {
 						NoneJSIndexes.push(path.join(fsPath, f))
@@ -23,7 +23,7 @@ export function getFileAbsolutePath(componentRelativePath: string) {
 			})
 			if (!trueFsPath && NoneJSIndexes.length) {
 				NoneJSIndexes.forEach((indexPath) => {
-					if (/.(s?css|less|sass)$/g.test(indexPath)) {
+					if (/\.(s?css|less|sass)$/g.test(indexPath)) {
 						trueFsPath = indexPath
 					}
 				})
@@ -36,9 +36,12 @@ export function getFileAbsolutePath(componentRelativePath: string) {
 			const dirName = path.dirname(fsPath);
 			if (fs.existsSync(dirName)) {
 				fs.readdirSync(dirName).forEach(f => {
-					if (f.includes(path.basename(fsPath))) {
-						if (!fs.statSync(path.join(dirName, f)).isDirectory()) {
-							trueFsPath = path.join(dirName, f);
+					// 只判断这两种类型
+					if (/\.(jsx?|tsx?)$/g.test(f)) {
+						if (f.includes(path.basename(fsPath))) {
+							if (!fs.statSync(path.join(dirName, f)).isDirectory()) {
+								trueFsPath = path.join(dirName, f);
+							}
 						}
 					}
 				})

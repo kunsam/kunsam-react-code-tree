@@ -1,62 +1,75 @@
 
 import * as vscode from "vscode";
 import { getFileAbsolutePath } from './extensionUtil';
-
+import * as path from 'path'
 
 const FILE_ROUTERS_MAP: Map<string, string[]> = new Map();
+const FILE_TREE_MAP: Map<string, string[]> = new Map();
 
 export type KRouter = {
 	path?: string
 	routers?: KRouter[]
 	IndexRoute?: boolean
 	componentRelativePath: string
+	uiNode?: boolean
 }
 
 const FILE_IMPORTS_MAP: Map<string, string[]> = new Map();
 
-function getRelatedFiles(id: string, path: string) {
-	const mapImports = FILE_IMPORTS_MAP.get(path);
+async function getRelatedFiles(id: string, absPath: string) {
+	if (!id || !absPath) {
+		return;
+	}
+	const mapImports = FILE_IMPORTS_MAP.get(absPath);
 	const imports = mapImports || [];
-
 	if (mapImports) {
 		KRouterTreeItem.setRelatedFiles(id, mapImports)
 		mapImports.forEach(item => {
 			getRelatedFiles(id, item)
 		})
 	} else {
-		const truePath = getFileAbsolutePath(path)
-		if (truePath) {
-			vscode.workspace.openTextDocument(truePath).then(doc => {
-				for (let i = 1; i < doc.lineCount - 1; i++) {
-					const lineText = doc.lineAt(i).text;
-					if (/\sfrom\s\'/.test(lineText)) {
-						const texts = lineText.split(' ')
-						if (texts[texts.length - 1]) {
-							const item = texts[texts.length - 1].replace('\'', '').replace('\"', '');
-							item && imports.push(item);
-						}
-					}
-					if (/import\(\'/.test(lineText)) {
-						const texts = lineText.split('\'')
-						if (texts[1]) {
-							const item = texts[1].replace('\'', '').replace('\"', '');
-							item && imports.push(item);
-						}
-					}
-					if (/function(.+)/.test(lineText) || /export(.+)/.test(lineText)) {
-						break;
+		try {
+			const doc = await vscode.workspace.openTextDocument(getFileAbsolutePath(absPath, false))
+			for (let i = 1; i < doc.lineCount - 1; i++) {
+				const lineText = doc.lineAt(i).text;
+				if (/\sfrom\s\'/.test(lineText)) {
+					const texts = lineText.split(' ')
+					if (texts[texts.length - 1]) {
+						const item = texts[texts.length - 1].replace('\'', '').replace('\"', '');
+						item && imports.push(item);
 					}
 				}
-				FILE_IMPORTS_MAP.set(path, imports)
-				const relativeImports = imports.filter(i => i.includes('/'));
-				KRouterTreeItem.setRelatedFiles(id, relativeImports)
-				relativeImports.forEach(item => {
-					getRelatedFiles(id, item)
-				})
+				if (/import\(\'/.test(lineText)) {
+					const texts = lineText.split('\'')
+					if (texts[1]) {
+						const item = texts[1].replace('\'', '').replace('\"', '');
+						item && imports.push(item);
+					}
+				}
+				if (/function(.+)/.test(lineText) || /export(.+)/.test(lineText)) {
+					break;
+				}
+			}
+			const relativeImports = imports.filter(i => i.includes('/')).map(a => a.replace(/\'/g, '').replace(/\"/g, '')).map(item => {
+				if (/^\.+/.test(item)) {
+					return path.join(path.dirname(absPath), item)
+				}
+				if (/src\//.test(item)) {
+					return getFileAbsolutePath(item)
+				}
+				return undefined
+			}).filter(a => !!a);
+			relativeImports.forEach(nextPath => {
+				if (!FILE_ROUTERS_MAP.has(nextPath)) {
+					getRelatedFiles(id, nextPath)
+				}
 			})
+			FILE_IMPORTS_MAP.set(absPath, relativeImports)
+			KRouterTreeItem.setRelatedFiles(id, relativeImports, absPath)
+		} catch {
+
 		}
 	}
-
 }
 
 
@@ -67,25 +80,43 @@ export class KRouterTreeItem {
 	public IndexRoute?: boolean;
 	public routers: KRouterTreeItem[] = []
 	public componentRelativePath: string;
+	public uiNode?: boolean
 
 	constructor(node: KRouter, parentId: string = '') {
 		this.path = node.path || '';
 		this.parentId = parentId;
 		this.componentRelativePath = node.componentRelativePath;
 		this.id = (parentId ? parentId + '/' : '') + this.path;
+		this.uiNode = node.uiNode;
 		this._addToTree(this, node.routers)
-		KRouterTreeItem.setRelatedFiles(this.id, [ node.componentRelativePath ])
-		getRelatedFiles(this.id, node.componentRelativePath)
+		const absPath = getFileAbsolutePath(node.componentRelativePath)
+		KRouterTreeItem.setRelatedFiles(this.id, [absPath])
+		getRelatedFiles(this.id, absPath)
 	}
 
-	static setRelatedFiles(id: string, relatedFiles: string[]) {
+	static setRelatedFiles(id: string, relatedFiles: string[], parentPath?: string) {
+
+		// if (relatedFiles.length) {
+		// 	console.log(id, relatedFiles, 'relatedFilesrelatedFiles\n');
+		// }
+
 		relatedFiles.forEach(r => {
 			if (!FILE_ROUTERS_MAP.has(r)) {
 				FILE_ROUTERS_MAP.set(r, [id]);
-				return;
+			} else {
+				FILE_ROUTERS_MAP.set(r, FILE_ROUTERS_MAP.get(r).concat([id]))
 			}
-			FILE_ROUTERS_MAP.set(r, FILE_ROUTERS_MAP.get(r).concat([id]))
+
+			// 写入文件树依赖
+			if (parentPath) {
+				if (!FILE_TREE_MAP.has(r)) {
+					FILE_TREE_MAP.set(r, [parentPath]);
+				} else {
+					FILE_TREE_MAP.set(r, FILE_TREE_MAP.get(r).concat([parentPath]))
+				}
+			}
 		});
+
 	}
 
 	private _addToTree(parent: KRouterTreeItem, routers: KRouter[] = []) {
@@ -116,20 +147,34 @@ export class KRouterTreeItem {
 // , fileTree: any, fileImports: { path: string, imports: string[] }[]
 export class KRouterTree {
 
-	private _tree: KRouterTreeItem[] = [];
+	public items: KRouterTreeItem[] = [];
 	// private _treeMap: Map<string, KRouterTreeItem> = new Map();
 
 	constructor(routers: KRouter[]) {
-		this._tree = routers.map(r => r.componentRelativePath && new KRouterTreeItem(r))
+		this.items = routers.map(r => r.componentRelativePath && new KRouterTreeItem(r))
 	}
 
-	public queryFileAppUrl(relativePath: string) {
-		const equalPath = relativePath.replace(/\/index.jsx?$/g, '')
-		return FILE_ROUTERS_MAP.get(equalPath)
+	public queryFileAppUrl(absPath: string) {
+		let queryPath = absPath;
+		if (!FILE_ROUTERS_MAP.has(queryPath)) {
+			queryPath = queryPath.replace(/\/index\.(j|t)sx?$/g, '')
+		}
+		if (!FILE_ROUTERS_MAP.has(queryPath)) {
+			queryPath = queryPath.replace(/(\.(j|t)sx?)$/g, '')
+		}
+		return FILE_ROUTERS_MAP.get(queryPath)
 	}
 
-	public get tree() {
-		return this._tree;
+	public getFileParents(absPath: string) {
+		let queryPath = absPath;
+		if (!FILE_TREE_MAP.has(queryPath)) {
+			queryPath = queryPath.replace(/\/index\.(j|t)sx?$/g, '')
+		}
+		if (!FILE_TREE_MAP.has(queryPath)) {
+			queryPath = queryPath.replace(/(\.(j|t)sx?)$/g, '')
+		}
+		return FILE_TREE_MAP.get(queryPath)
 	}
+
 
 }

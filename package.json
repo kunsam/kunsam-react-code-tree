@@ -90,6 +90,14 @@
       {
         "command": "extension.getFileAppUrl",
         "title": "* Get File App Url"
+      },
+      {
+        "command": "extension.goFileParentFile",
+        "title": "* Go to file parent"
+      },
+      {
+        "command": "extension.goFileTopParentFile",
+        "title": "* Go to file top parent"
       }
     ],
     "keybindings": [
@@ -148,9 +156,19 @@
           "group": "navigation@6"
         },
         {
+          "when": "editorTextFocus",
           "command": "extension.getFileAppUrl",
-          "title": "Get File App Url",
           "group": "navigation@5"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "extension.goFileParentFile",
+          "group": "navigation@8"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "extension.goFileTopParentFile",
+          "group": "navigation@9"
         }
       ]
     },
