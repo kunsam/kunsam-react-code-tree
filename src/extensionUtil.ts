@@ -42,15 +42,16 @@ export function getFileAbsolutePath(filePath: string, isRelative = true) {
 			// 可能是由没带后缀引起的
 			const dirName = path.dirname(fsPath);
 			if (fs.existsSync(dirName)) {
-				fs.readdirSync(dirName).forEach(f => {
+				fs.readdirSync(dirName).every(f => {
 					// 只判断这两种类型
 					if (/\.(jsx?|tsx?)$/g.test(f)) {
-						if (f.includes(path.basename(fsPath))) {
+						if (f.split('.')[0] === path.basename(fsPath)) {
 							if (!fs.statSync(path.join(dirName, f)).isDirectory()) {
 								trueFsPath = path.join(dirName, f);
 							}
 						}
 					}
+					return !trueFsPath
 				})
 			}
 	}
@@ -82,16 +83,16 @@ export function GotoTextDocument(trueFsPath: string) {
  * @export
  * @param {string[]} files
  */
-export function pickFiles2Open(files: string[]) {
-	if (files.length === 1) {
-		GotoTextDocument(files[0])
+export function pickFiles2Open(files: { label: string, target: string}[], isOpenFirst = true) {
+	if (files.length === 1 && isOpenFirst) {
+		GotoTextDocument( getFileAbsolutePath(files[0].target, false) )
 	} else {
-		if (files.length > 1) {
-			vscode.window.showQuickPick(files.map((r: string) => ({ label: path.relative(ROOT_PATH, r), target: r })), {
+		if (files.length) {
+			vscode.window.showQuickPick(files, {
 				placeHolder: '请选择打开的文件',
 			}).then(result => {
 				if (result && result.target) {
-					GotoTextDocument(result.target)
+					GotoTextDocument(getFileAbsolutePath(result.target, false))
 				}
 			});
 		}

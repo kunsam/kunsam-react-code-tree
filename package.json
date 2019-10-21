@@ -80,12 +80,8 @@
         "title": "* Get File App Url"
       },
       {
-        "command": "extension.goFileParentFile",
-        "title": "* Go to file parent"
-      },
-      {
-        "command": "extension.goFileTopParentFile",
-        "title": "* Go to file top parent"
+        "command": "kReactRouterTree.showFileParentsInPick",
+        "title": "show file parents"
       }
     ],
     "keybindings": [
@@ -105,6 +101,12 @@
         "command": "kReactRouterTree.SearchRouter",
         "mac": "cmd+o cmd+o",
         "key": "ctrl+o ctrl+o"
+      },
+      {
+        "command": "kReactRouterTree.showFileParentsInPick",
+        "mac": "cmd+4 cmd+4",
+        "key": "ctrl+4 ctrl+4",
+        "when": "editorTextFocus"
       }
     ],
     "menus": {
@@ -144,16 +146,6 @@
           "when": "editorTextFocus",
           "command": "extension.getFileAppUrl",
           "group": "navigation@5"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "extension.goFileParentFile",
-          "group": "navigation@8"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "extension.goFileTopParentFile",
-          "group": "navigation@9"
         }
       ]
     },

@@ -10,8 +10,8 @@ export type PathComponentPathPair = {
 }
 
 
-// 文件 - 子节点表
-const FILE_TREE_MAP: Map<string, string[]> = new Map();
+// 文件 - 父节点表
+const FILE_PARENTS_MAP: Map<string, string[]> = new Map();
 
 // 文件 - 引入表
 const FILE_IMPORTS_MAP: Map<string, string[]> = new Map();
@@ -76,6 +76,7 @@ async function getRelatedFiles(id: string, absPath: string) {
 				}
 				return undefined
 			}).filter(a => !!a);
+
 			relativeImports.forEach(nextPath => {
 				if (!FILE_ROUTERS_MAP.has(nextPath)) {
 					getRelatedFiles(id, nextPath)
@@ -83,6 +84,7 @@ async function getRelatedFiles(id: string, absPath: string) {
 			})
 			FILE_IMPORTS_MAP.set(absPath, relativeImports)
 			KRouterTreeItem.setRelatedFiles(id, relativeImports, absPath)
+
 		} catch {
 
 		}
@@ -120,14 +122,16 @@ export class KRouterTreeItem {
 			}
 			// 写入文件树依赖
 			if (parentPath) {
-				if (!FILE_TREE_MAP.has(r)) {
-					FILE_TREE_MAP.set(r, [parentPath]);
+				if (!FILE_PARENTS_MAP.has(r)) {
+					FILE_PARENTS_MAP.set(r, [parentPath]);
 				} else {
-					FILE_TREE_MAP.set(r, FILE_TREE_MAP.get(r).concat([parentPath]))
+					const list = FILE_PARENTS_MAP.get(r);
+					if (list.find(l => l !== parentPath)) {
+						FILE_PARENTS_MAP.set(r, FILE_PARENTS_MAP.get(r).concat([parentPath]))
+					}
 				}
 			}
 		});
-
 	}
 
 	private _addToTree(parent: KRouterTreeItem, routers: KRouter[] = []) {
@@ -181,15 +185,25 @@ export class KRouterTree {
 		return FILE_ROUTERS_MAP.get(queryPath)
 	}
 
-	public getFileParents(absPath: string) {
+	public getFileParents(absPath: string): { isTopRouter: boolean, parents?: string[] } {
 		let queryPath = absPath;
-		if (!FILE_TREE_MAP.has(queryPath)) {
+		let isTopRouter = false;
+		if (!FILE_PARENTS_MAP.has(queryPath)) {
 			queryPath = queryPath.replace(/\/index\.(j|t)sx?$/g, '')
+			if (FILE_ROUTERS_MAP.has(queryPath)) {
+				isTopRouter = true
+			}
 		}
-		if (!FILE_TREE_MAP.has(queryPath)) {
+		if (!FILE_PARENTS_MAP.has(queryPath)) {
 			queryPath = queryPath.replace(/(\.(j|t)sx?)$/g, '')
+			if (FILE_ROUTERS_MAP.has(queryPath)) {
+				isTopRouter = true
+			}
 		}
-		return FILE_TREE_MAP.get(queryPath)
+		if (FILE_ROUTERS_MAP.has(queryPath)) {
+			isTopRouter = true
+		}
+		return { isTopRouter, parents: FILE_PARENTS_MAP.get(queryPath) }
 	}
 
 	private _setFlatternRouters(routers?: KRouter[], parentPath?: string) {
