@@ -2,9 +2,16 @@
 import * as fs from 'fs'
 import * as path from "path";
 import * as vscode from "vscode";
+import { ROOT_PATH } from './config'
 
-const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
-
+/**
+ * 获取文件绝对路径
+ *
+ * @export
+ * @param {string} filePath
+ * @param {boolean} [isRelative=true]
+ * @returns
+ */
 export function getFileAbsolutePath(filePath: string, isRelative = true) {
 	// 没带后缀
 	const fsPath = isRelative ? path.resolve(path.join(ROOT_PATH, filePath)) : filePath;
@@ -49,7 +56,12 @@ export function getFileAbsolutePath(filePath: string, isRelative = true) {
 	}
 	return trueFsPath;
 }
-
+/**
+ * vscode打开文件[绝对路径]
+ *
+ * @export
+ * @param {string} trueFsPath
+ */
 export function GotoTextDocument(trueFsPath: string) {
 	if (!trueFsPath) {
 		vscode.window.showInformationMessage(`未找到结果`)
@@ -60,6 +72,28 @@ export function GotoTextDocument(trueFsPath: string) {
 			})
 		} catch (e) {
 			vscode.window.showInformationMessage(`无法打开${trueFsPath}`)
+		}
+	}
+}
+
+/**
+ * vscode pick 文件列表并打开选中文件 [绝对路径]
+ *
+ * @export
+ * @param {string[]} files
+ */
+export function pickFiles2Open(files: string[]) {
+	if (files.length === 1) {
+		GotoTextDocument(files[0])
+	} else {
+		if (files.length > 1) {
+			vscode.window.showQuickPick(files.map((r: string) => ({ label: path.relative(ROOT_PATH, r), target: r })), {
+				placeHolder: '请选择打开的文件',
+			}).then(result => {
+				if (result && result.target) {
+					GotoTextDocument(result.target)
+				}
+			});
 		}
 	}
 }

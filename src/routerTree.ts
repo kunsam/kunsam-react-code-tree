@@ -1,23 +1,37 @@
+import * as path from 'path'
 
 import * as vscode from "vscode";
 import { getFileAbsolutePath } from './extensionUtil';
-import * as path from 'path'
 
 
+export type PathComponentPathPair = {
+	path: string
+	componentRelativePath: string
+}
+
+
+// 文件 - 子节点表
 const FILE_TREE_MAP: Map<string, string[]> = new Map();
+
+// 文件 - 引入表
+const FILE_IMPORTS_MAP: Map<string, string[]> = new Map();
+
+// 文件 - 路由表
 const FILE_ROUTERS_MAP: Map<string, string[]> = new Map();
-const ROUTERS_MAP: Map<string, { path: string, componentRelativePath: string }> = new Map();
+
+// 路由表
+const ROUTERS_MAP: Map<string, PathComponentPathPair> = new Map();
 
 
 export type KRouter = {
 	path?: string
+	uiNode?: boolean
 	routers?: KRouter[]
 	IndexRoute?: boolean
 	componentRelativePath: string
-	uiNode?: boolean
 }
 
-const FILE_IMPORTS_MAP: Map<string, string[]> = new Map();
+
 
 async function getRelatedFiles(id: string, absPath: string) {
 	if (!id || !absPath) {
@@ -98,18 +112,12 @@ export class KRouterTreeItem {
 	}
 
 	static setRelatedFiles(id: string, relatedFiles: string[], parentPath?: string) {
-
-		// if (relatedFiles.length) {
-		// 	console.log(id, relatedFiles, 'relatedFilesrelatedFiles\n');
-		// }
-
 		relatedFiles.forEach(r => {
 			if (!FILE_ROUTERS_MAP.has(r)) {
 				FILE_ROUTERS_MAP.set(r, [id]);
 			} else {
 				FILE_ROUTERS_MAP.set(r, FILE_ROUTERS_MAP.get(r).concat([id]))
 			}
-
 			// 写入文件树依赖
 			if (parentPath) {
 				if (!FILE_TREE_MAP.has(r)) {
@@ -151,12 +159,15 @@ export class KRouterTreeItem {
 export class KRouterTree {
 
 	public items: KRouterTreeItem[] = [];
+	public allRouters: PathComponentPathPair[] = []
+
 	// private _treeMap: Map<string, KRouterTreeItem> = new Map();
 
 	// public flatternRouters: 
 	constructor(routers: KRouter[]) {
 		this.items = routers.map(r => r.componentRelativePath && new KRouterTreeItem(r))
 		this._setFlatternRouters(routers, '')
+		this.allRouters = this.getFlatternRouters()
 	}
 
 	public queryFileAppUrl(absPath: string) {

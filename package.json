@@ -44,14 +44,6 @@
         }
       },
       {
-        "command": "kReactRouterTree.refresh",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
         "command": "kReactCodeTree.insertAfter",
         "title": "Insert After"
       },
@@ -70,10 +62,6 @@
       {
         "command": "kReactCodeTree.editNode",
         "title": "Edit"
-      },
-      {
-        "command": "kReactRouterTree.GotoComponent",
-        "title": "Go to File"
       },
       {
         "command": "kReactRouterTree.SearchRouter",
@@ -125,10 +113,6 @@
         {
           "command": "kReactCodeTree.refresh",
           "when": "view == kReactCodeTree"
-        },
-        {
-          "command": "kReactRouterTree.refresh",
-          "when": "view == kReactRouterTree"
         }
       ],
       "view/item/context": [
@@ -143,10 +127,6 @@
         {
           "command": "kReactCodeTree.editNode",
           "when": "view == kReactCodeTree"
-        },
-        {
-          "command": "kReactRouterTree.GotoComponent",
-          "when": "view == kReactRouterTree"
         }
       ],
       "editor/context": [

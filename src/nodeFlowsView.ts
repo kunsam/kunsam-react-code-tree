@@ -3,10 +3,9 @@ import * as path from 'path'
 import * as vscode from "vscode";
 import NodeFlowsUtil from "./nodeFlowsUtil";
 import { KC_Node, KC_NODE_ICON_TYPE } from "./type";
-import { PROJECT_DIR } from "./constant";
+import { ROOT_PATH, PROJECT_DIR } from "./config";
 
 
-const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
 const CONFIG_FILE_ABS_PATH = path.join(ROOT_PATH, PROJECT_DIR, '/workflows/index.js')
 
 function _getSymbols(
