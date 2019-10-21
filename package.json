@@ -31,10 +31,6 @@
         {
           "id": "kReactCodeTree",
           "name": "k React Code Tree"
-        },
-        {
-          "id": "kReactRouterTree",
-          "name": "k React Router Tree"
         }
       ]
     },
@@ -80,6 +76,10 @@
         "title": "Go to File"
       },
       {
+        "command": "kReactRouterTree.SearchRouter",
+        "title": "Search Router"
+      },
+      {
         "command": "extension.getKReactNodeCode",
         "title": "* Get kReactCodeTree Node Code"
       },
@@ -112,6 +112,11 @@
         "mac": "cmd+i cmd+i",
         "key": "ctrl+i ctrl+i",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "kReactRouterTree.SearchRouter",
+        "mac": "cmd+o cmd+o",
+        "key": "ctrl+o ctrl+o"
       }
     ],
     "menus": {

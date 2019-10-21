@@ -3,15 +3,43 @@ import * as fs from 'fs'
 import * as path from "path";
 import * as vscode from "vscode";
 import { KC_Node } from './type';
-import { KRouterTree } from './routerTree';
+import { selectText } from './select';
+import { PROJECT_DIR } from './constant';
 import NodeFlowsUtil from './nodeFlowsUtil';
 import { NodeFlowsView } from "./nodeFlowsView";
-import { RouterTreeView } from './routerTreeView';
-import { selectText } from './select';
+import { KRouterTree, KRouter } from './routerTree';
 import { getFileAbsolutePath, GotoTextDocument } from './extensionUtil';
-import { PROJECT_DIR } from './constant';
 
 const ROOT_PATH = vscode.workspace.workspaceFolders[0].uri.path;
+
+function showADocumentWithAbsPath(filePath: string, tips: string) {
+  try {
+    vscode.workspace.openTextDocument(filePath).then(doc => {
+      vscode.window.showTextDocument(doc).then(_ => {
+        vscode.window.showInformationMessage(tips);
+      })
+    })
+  } catch (e) {
+    vscode.window.showErrorMessage(String(e));
+  }
+}
+
+function pickFiles2Open(files: string[]) {
+  if (files.length === 1) {
+    GotoTextDocument(files[0])
+  } else {
+    if (files.length > 1) {
+      vscode.window.showQuickPick(files.map((r: string) => ({ label: path.relative(ROOT_PATH, r), target: r })), {
+        placeHolder: '请选择打开的文件',
+      }).then(result => {
+        if (result && result.target) {
+          GotoTextDocument(result.target)
+        }
+      });
+    }
+  }
+}
+
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -134,12 +162,21 @@ export function activate(context: vscode.ExtensionContext) {
 
   const routers = require(ROUTER_FILE_ABS_PATH)
   const kRouterTree = new KRouterTree(routers)
-  const routerTreeView = new RouterTreeView(kRouterTree)
-  vscode.commands.registerCommand("kReactRouterTree.refresh", () => {
-    vscode.window.showInformationMessage(`kReactRouterTree called refresh.`);
-    delete require.cache[require.resolve(ROUTER_FILE_ABS_PATH)]
-    routerTreeView.reset(new KRouterTree(require(ROUTER_FILE_ABS_PATH)));
-  });
+  // const routerTreeView = new RouterTreeView(kRouterTree)
+  // vscode.commands.registerCommand("kReactRouterTree.refresh", () => {
+  //   vscode.window.showInformationMessage(`kReactRouterTree called refresh.`);
+  //   delete require.cache[require.resolve(ROUTER_FILE_ABS_PATH)]
+  //   routerTreeView.reset(new KRouterTree(require(ROUTER_FILE_ABS_PATH)));
+  // });
+
+  context.subscriptions.push(vscode.commands.registerCommand("extension.goFileParentFile", (uri: vscode.Uri) => {
+    const parents = kRouterTree.getFileParents(uri.fsPath)
+    pickFiles2Open(parents)
+  }))
+  context.subscriptions.push(vscode.commands.registerCommand("extension.goFileTopParentFile", (uri: vscode.Uri) => {
+    let parents = recursiveGetParents(uri.fsPath, [])
+    pickFiles2Open(parents)
+  }))
 
   context.subscriptions.push(vscode.commands.registerCommand('kReactRouterTree.GotoComponent', (selectedNode: any) => {
     // console.log(selectedNode, 'selectedNode')
@@ -148,7 +185,6 @@ export function activate(context: vscode.ExtensionContext) {
       GotoTextDocument(trueFsPath)
     }
   }))
-
   context.subscriptions.push(vscode.commands.registerCommand("extension.getFileAppUrl", (uri: vscode.Uri) => {
     const routers = kRouterTree.queryFileAppUrl(uri.fsPath)
     if (routers) {
@@ -159,12 +195,6 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage('暂无结果')
     }
   }))
-
-  context.subscriptions.push(vscode.commands.registerCommand("extension.goFileParentFile", (uri: vscode.Uri) => {
-    const parents = kRouterTree.getFileParents(uri.fsPath)
-    routerTreeView.showFileParents(parents)
-  }))
-
 
   let preventLoopMap = new Map()
   function recursiveGetParents(path: string,  result: string[]) {
@@ -186,11 +216,19 @@ export function activate(context: vscode.ExtensionContext) {
     return result;
   }
 
-  context.subscriptions.push(vscode.commands.registerCommand("extension.goFileTopParentFile", (uri: vscode.Uri) => {
-    let parents = recursiveGetParents(uri.fsPath, [])
-    routerTreeView.showFileParents(parents)
-  }))
 
-  vscode.window.showInformationMessage('KReactCode准备完毕')
+  const allRouters = kRouterTree.getFlatternRouters();
+  context.subscriptions.push(vscode.commands.registerCommand('kReactRouterTree.SearchRouter', async () => {
+    const result: any = await vscode.window.showQuickPick(allRouters.map((r: KRouter) => ({ label: r.path })), {
+      placeHolder: '请输入 pathname',
+    });
+    if (result && result.label) {
+      const componentRelativePath = kRouterTree.queryComponentRelativePathByPath(result.label)
+      if (componentRelativePath) {
+        const filePath = getFileAbsolutePath(componentRelativePath)
+        showADocumentWithAbsPath(filePath, `Got: ${result.label}`)
+      }
+    }
+  }))
 
 }

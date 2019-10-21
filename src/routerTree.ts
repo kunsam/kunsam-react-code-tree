@@ -3,8 +3,11 @@ import * as vscode from "vscode";
 import { getFileAbsolutePath } from './extensionUtil';
 import * as path from 'path'
 
-const FILE_ROUTERS_MAP: Map<string, string[]> = new Map();
+
 const FILE_TREE_MAP: Map<string, string[]> = new Map();
+const FILE_ROUTERS_MAP: Map<string, string[]> = new Map();
+const ROUTERS_MAP: Map<string, { path: string, componentRelativePath: string }> = new Map();
+
 
 export type KRouter = {
 	path?: string
@@ -150,8 +153,10 @@ export class KRouterTree {
 	public items: KRouterTreeItem[] = [];
 	// private _treeMap: Map<string, KRouterTreeItem> = new Map();
 
+	// public flatternRouters: 
 	constructor(routers: KRouter[]) {
 		this.items = routers.map(r => r.componentRelativePath && new KRouterTreeItem(r))
+		this._setFlatternRouters(routers, '')
 	}
 
 	public queryFileAppUrl(absPath: string) {
@@ -176,5 +181,26 @@ export class KRouterTree {
 		return FILE_TREE_MAP.get(queryPath)
 	}
 
+	private _setFlatternRouters(routers?: KRouter[], parentPath?: string) {
+		if (!routers) return
+		routers.forEach(r => {
+			if (r.path) {
+				let pathname = parentPath + (r.path.includes('/') ? r.path : `/${r.path}`)
+				ROUTERS_MAP.set(pathname, { path: pathname, componentRelativePath: r.componentRelativePath })
+			}
+			this._setFlatternRouters(r.routers, r.path)
+		})
+	}
+	public getFlatternRouters() {
+		let result = []
+		ROUTERS_MAP.forEach(value => {
+			result.push(value)
+		})
+		return result
+	}
+	public queryComponentRelativePathByPath(rpath: string) {
+		const result = ROUTERS_MAP.get(rpath);
+		return result && result.componentRelativePath
+	}
 
 }
