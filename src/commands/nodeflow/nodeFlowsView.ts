@@ -2,8 +2,8 @@ import * as fs from "fs";
 import * as path from 'path'
 import * as vscode from "vscode";
 import NodeFlowsUtil from "./nodeFlowsUtil";
-import { KC_Node, KC_NODE_ICON_TYPE } from "./type";
-import { ROOT_PATH, PROJECT_DIR } from "./config";
+import { KC_Node, KC_NODE_ICON_TYPE } from "../../type";
+import { ROOT_PATH, PROJECT_DIR } from "../../config";
 
 
 const CONFIG_FILE_ABS_PATH = path.join(ROOT_PATH, PROJECT_DIR, '/workflows/index.js')

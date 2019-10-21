@@ -1,7 +1,7 @@
 import * as path from 'path'
 
 import * as vscode from "vscode";
-import { getFileAbsolutePath } from './extensionUtil';
+import { getFileAbsolutePath } from '../../extensionUtil';
 
 
 export type PathComponentPathPair = {

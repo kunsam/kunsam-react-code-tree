@@ -1,9 +1,9 @@
 
 import * as fs from 'fs'
 import * as vscode from "vscode";
-import { KC_Node } from "../type";
-import NodeFlowsUtil from "../nodeFlowsUtil";
-import { NodeFlowsView } from "../nodeFlowsView";
+import { KC_Node } from "../../type";
+import NodeFlowsUtil from "./nodeFlowsUtil";
+import { NodeFlowsView } from "./nodeFlowsView";
 
 
 

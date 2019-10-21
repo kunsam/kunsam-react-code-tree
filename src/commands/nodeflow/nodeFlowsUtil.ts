@@ -1,6 +1,6 @@
 import * as path from 'path'
 import * as vscode from "vscode";
-import { KC_Node } from './type';
+import { KC_Node } from '../../type';
 
 export default class NodeFlowsUtil {
 

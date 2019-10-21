@@ -1,9 +1,5 @@
 "use strict";
-import * as fs from 'fs'
-import * as path from "path";
 import * as vscode from "vscode";
-import { KRouter } from './routerTree';
-import { getFileAbsolutePath, GotoTextDocument } from './extensionUtil';
 import KeybindingCommands from './commands/keybinding';
 import NodeFlowCommands from './commands/nodeflow';
 import RoutersCommand from './commands/router';

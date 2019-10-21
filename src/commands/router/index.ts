@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as vscode from "vscode";
 import { ROOT_PATH, PROJECT_DIR } from '../../config'
-import { KRouterTree, KRouter } from '../../routerTree';
+import { KRouterTree, KRouter } from './routerTree';
 import { pickFiles2Open, getFileAbsolutePath, GotoTextDocument } from '../../extensionUtil';
 
 export default class RoutersCommand {
