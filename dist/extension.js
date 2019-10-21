@@ -122,25 +122,6 @@ exports.default = KeybindingCommands;
 
 /***/ }),
 
-/***/ "./src/commands/nodeflow sync recursive":
-/*!************************************!*\
-  !*** ./src/commands/nodeflow sync ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = "./src/commands/nodeflow sync recursive";
-
-/***/ }),
-
 /***/ "./src/commands/nodeflow/index.ts":
 /*!****************************************!*\
   !*** ./src/commands/nodeflow/index.ts ***!
@@ -392,7 +373,7 @@ exports.default = NodeFlowsUtil;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(__filename) {
+
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -410,6 +391,7 @@ const nodeFlowsUtil_1 = __webpack_require__(/*! ./nodeFlowsUtil */ "./src/comman
 const type_1 = __webpack_require__(/*! ../../type */ "./src/type.ts");
 const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
 const CONFIG_FILE_ABS_PATH = path.join(config_1.ROOT_PATH, config_1.PROJECT_DIR, '/workflows/index.js');
+const iconPath1 = path.join(__filename, '..', '..', 'resources', 'light', 'node.svg');
 function _getSymbols(data, symbols, currentIndex, lastResults, results, doc) {
     return new Promise((res) => {
         function filterResultsByFilePattern(symbols) {
@@ -513,65 +495,67 @@ class NodeFlowsView {
         this._initNodeFlowsView();
     }
     _initNodeFlowsView() {
-        if (fs.existsSync(CONFIG_FILE_ABS_PATH)) {
-            const workflows = __webpack_require__("./src/commands/nodeflow sync recursive")(CONFIG_FILE_ABS_PATH);
-            this._treeDataProvider = new KReactCodeTree(workflows);
-            delete __webpack_require__.c[/*require.resolve*/(__webpack_require__("./src/commands/nodeflow sync recursive").resolve(CONFIG_FILE_ABS_PATH))];
-            this._view = vscode.window.createTreeView("kReactCodeTree", {
-                treeDataProvider: this._treeDataProvider,
-                showCollapseAll: true
-            });
-            this._view.onDidChangeSelection(e => {
-                e.selection.forEach(data => {
-                    if (data.children && data.children.length)
-                        return;
-                    console.log(data, "onDidChangeSelection selection");
-                    if (data.location) {
-                        this._showlocatedDoc(data.location);
-                        return;
-                    }
-                    // todo 存在Location直接跳转
-                    // 如果有filePattern 先加载这个fileDocument
-                    if (data.filePattern) {
-                        vscode.workspace.findFiles(data.filePattern).then(files => {
-                            console.log(files, "findFiles");
-                            if (files.length > 1) {
-                                vscode.window.showInformationMessage(`filePattern对应了多个文件，请确定唯一性`);
-                                return;
-                            }
-                            if (!files.length) {
-                                vscode.window.showErrorMessage(`未找到filePattern对应文件 ${data.filePattern}`);
-                                getBestMatchingSymbol(data).then((results => {
-                                    this._showMatchedSymbols(data, results, config_1.ROOT_PATH);
-                                }));
-                            }
-                            else {
-                                const file = files[0];
-                                vscode.workspace.openTextDocument(file).then(doc => {
-                                    getBestMatchingSymbol(data, doc).then((results => {
-                                        // 仅有 filepattern结果
-                                        if (!results.length) {
-                                            vscode.window.showTextDocument(doc);
-                                        }
-                                        else {
-                                            this._showMatchedSymbols(data, results, config_1.ROOT_PATH);
-                                        }
-                                    }));
-                                });
-                            }
-                        });
-                    }
-                    else {
-                        getBestMatchingSymbol(data).then((results => {
-                            this._showMatchedSymbols(data, results, config_1.ROOT_PATH);
-                        }));
-                    }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (fs.existsSync(CONFIG_FILE_ABS_PATH)) {
+                const workflows = require(`${CONFIG_FILE_ABS_PATH}`);
+                this._treeDataProvider = new KReactCodeTree(workflows);
+                delete require.cache[require.resolve(`${CONFIG_FILE_ABS_PATH}`)];
+                this._view = vscode.window.createTreeView("kReactCodeTree", {
+                    treeDataProvider: this._treeDataProvider,
+                    showCollapseAll: true
                 });
-            });
-        }
-        else {
-            vscode.window.showWarningMessage(`plz add ${CONFIG_FILE_ABS_PATH}`);
-        }
+                this._view.onDidChangeSelection(e => {
+                    e.selection.forEach(data => {
+                        if (data.children && data.children.length)
+                            return;
+                        console.log(data, "onDidChangeSelection selection");
+                        if (data.location) {
+                            this._showlocatedDoc(data.location);
+                            return;
+                        }
+                        // todo 存在Location直接跳转
+                        // 如果有filePattern 先加载这个fileDocument
+                        if (data.filePattern) {
+                            vscode.workspace.findFiles(data.filePattern).then(files => {
+                                console.log(files, "findFiles");
+                                if (files.length > 1) {
+                                    vscode.window.showInformationMessage(`filePattern对应了多个文件，请确定唯一性`);
+                                    return;
+                                }
+                                if (!files.length) {
+                                    vscode.window.showErrorMessage(`未找到filePattern对应文件 ${data.filePattern}`);
+                                    getBestMatchingSymbol(data).then((results => {
+                                        this._showMatchedSymbols(data, results, config_1.ROOT_PATH);
+                                    }));
+                                }
+                                else {
+                                    const file = files[0];
+                                    vscode.workspace.openTextDocument(file).then(doc => {
+                                        getBestMatchingSymbol(data, doc).then((results => {
+                                            // 仅有 filepattern结果
+                                            if (!results.length) {
+                                                vscode.window.showTextDocument(doc);
+                                            }
+                                            else {
+                                                this._showMatchedSymbols(data, results, config_1.ROOT_PATH);
+                                            }
+                                        }));
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            getBestMatchingSymbol(data).then((results => {
+                                this._showMatchedSymbols(data, results, config_1.ROOT_PATH);
+                            }));
+                        }
+                    });
+                });
+            }
+            else {
+                vscode.window.showWarningMessage(`plz add ${CONFIG_FILE_ABS_PATH}`);
+            }
+        });
     }
     get treeDataProvider() {
         return this._treeDataProvider;
@@ -646,8 +630,8 @@ class KReactCodeTree {
             // __kReactCodeTree__/workflows
             const truePath = path.join(config_1.ROOT_PATH, config_1.PROJECT_DIR, '/workflows', element.requirePath);
             try {
-                element.children = __webpack_require__("./src/commands/nodeflow sync recursive")(truePath);
-                delete __webpack_require__.c[/*require.resolve*/(__webpack_require__("./src/commands/nodeflow sync recursive").resolve(truePath))];
+                element.children = require(`${truePath}`);
+                delete require.cache[require.resolve(`${truePath}`)];
             }
             catch (_a) {
                 vscode.window.showErrorMessage(`${truePath}有误`);
@@ -715,6 +699,8 @@ class KReactCodeTree {
         this._onDidChangeTreeData.fire();
     }
     _getIconPath(iconType) {
+        console.log(path.join(__filename, '..', '..', 'resources', 'light', 'node.svg'), '123');
+        console.log(path.join(__filename, '..', 'resources', 'light', 'node.svg'), '44444');
         switch (iconType) {
             default: {
                 return {};
@@ -722,16 +708,16 @@ class KReactCodeTree {
             case type_1.KC_NODE_ICON_TYPE.node: {
                 return {
                     iconPath: {
-                        light: path.join(__filename, '..', '..', 'resources', 'light', 'node.svg'),
-                        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'node.svg'),
+                        light: `${path.join(__filename, '..', '..', 'resources', 'light', 'node.svg')}`,
+                        dark: `${path.join(__filename, '..', '..', 'resources', 'dark', 'node.svg')}`,
                     }
                 };
             }
             case type_1.KC_NODE_ICON_TYPE.text: {
                 return {
                     iconPath: {
-                        light: path.join(__filename, '..', '..', 'resources', 'light', 'text.svg'),
-                        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'text.svg'),
+                        light: `${path.join(__filename, '..', '..', 'resources', 'light', 'text.svg')}`,
+                        dark: `${path.join(__filename, '..', '..', 'resources', 'dark', 'text.svg')}`,
                     }
                 };
             }
@@ -777,26 +763,6 @@ class KReactCodeTreeItem extends vscode.TreeItem {
 }
 exports.KReactCodeTreeItem = KReactCodeTreeItem;
 
-/* WEBPACK VAR INJECTION */}.call(this, "/index.js"))
-
-/***/ }),
-
-/***/ "./src/commands/router sync recursive":
-/*!**********************************!*\
-  !*** ./src/commands/router sync ***!
-  \**********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = function() { return []; };
-webpackEmptyContext.resolve = webpackEmptyContext;
-module.exports = webpackEmptyContext;
-webpackEmptyContext.id = "./src/commands/router sync recursive";
 
 /***/ }),
 
@@ -835,7 +801,7 @@ class RoutersCommand {
             vscode.window.showErrorMessage('未找到路由配置文件');
             return;
         }
-        return __webpack_require__("./src/commands/router sync recursive")(ROUTER_FILE_ABS_PATH);
+        return require(`${ROUTER_FILE_ABS_PATH}`);
     }
     init(context) {
         this.kRouterTree = new routerTree_1.KRouterTree(this.loadRouters());

@@ -5,8 +5,8 @@ import NodeFlowsUtil from "./nodeFlowsUtil";
 import { KC_Node, KC_NODE_ICON_TYPE } from "../../type";
 import { ROOT_PATH, PROJECT_DIR } from "../../config";
 
-
 const CONFIG_FILE_ABS_PATH = path.join(ROOT_PATH, PROJECT_DIR, '/workflows/index.js')
+
 
 function _getSymbols(
 	data: KC_Node,
@@ -132,18 +132,16 @@ export class NodeFlowsView {
 		this._initNodeFlowsView();
 	}
 
-	private _initNodeFlowsView() {
+	private async _initNodeFlowsView() {
 
 		if (fs.existsSync(CONFIG_FILE_ABS_PATH)) {
-			const workflows = require(CONFIG_FILE_ABS_PATH)
+			const workflows = __non_webpack_require__(`${CONFIG_FILE_ABS_PATH}`)
 			this._treeDataProvider = new KReactCodeTree(workflows)
-			delete require.cache[require.resolve(CONFIG_FILE_ABS_PATH)]
-
+			delete __non_webpack_require__.cache[__non_webpack_require__.resolve(`${CONFIG_FILE_ABS_PATH}`)]
 			this._view = vscode.window.createTreeView("kReactCodeTree", {
 				treeDataProvider: this._treeDataProvider,
 				showCollapseAll: true
 			});
-
 			this._view.onDidChangeSelection(e => {
 				e.selection.forEach(data => {
 					if (data.children && data.children.length) return;
@@ -274,8 +272,8 @@ export class KReactCodeTree implements vscode.TreeDataProvider<KC_Node> {
 			// __kReactCodeTree__/workflows
 			const truePath = path.join(ROOT_PATH, PROJECT_DIR, '/workflows', element.requirePath)
 			try {
-				element.children = require(truePath)
-				delete require.cache[require.resolve(truePath)]
+				element.children = __non_webpack_require__(`${truePath}`)
+				delete __non_webpack_require__.cache[__non_webpack_require__.resolve(`${truePath}`)]
 			} catch {
 				vscode.window.showErrorMessage(`${truePath}有误`)
 			}
@@ -354,16 +352,16 @@ export class KReactCodeTree implements vscode.TreeDataProvider<KC_Node> {
 			case KC_NODE_ICON_TYPE.node: {
 				return {
 					iconPath: {
-						light: path.join(__filename, '..', '..', 'resources', 'light', 'node.svg'),
-						dark: path.join(__filename, '..', '..', 'resources', 'dark', 'node.svg'),
+						light: `${path.join(__filename, '..', '..', 'resources', 'light', 'node.svg')}`,
+						dark: `${path.join(__filename, '..', '..', 'resources', 'dark', 'node.svg')}`,
 					}
 				}
 			}
 			case KC_NODE_ICON_TYPE.text: {
 				return {
 					iconPath: {
-						light: path.join(__filename, '..', '..', 'resources', 'light', 'text.svg'),
-						dark: path.join(__filename, '..', '..', 'resources', 'dark', 'text.svg'),
+						light: `${path.join(__filename, '..', '..', 'resources', 'light', 'text.svg')}`,
+						dark: `${path.join(__filename, '..', '..', 'resources', 'dark', 'text.svg')}`,
 					}
 				}
 			}

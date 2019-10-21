@@ -15,7 +15,7 @@
     "onCommand:kReactCodeTree.gotoRelative",
     "onCommand:extension.selectBracket"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -171,6 +171,7 @@
   },
   "devDependencies": {
     "@types/node": "^10.12.21",
+    "@types/webpack": "^4.39.4",
     "ts-loader": "^6.2.0",
     "typescript": "^3.6.4",
     "webpack": "^4.41.2",

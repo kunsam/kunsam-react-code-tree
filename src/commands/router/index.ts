@@ -20,7 +20,7 @@ export default class RoutersCommand {
 			vscode.window.showErrorMessage('未找到路由配置文件')
 			return
 		}
-		return require(ROUTER_FILE_ABS_PATH);
+		return __non_webpack_require__(`${ROUTER_FILE_ABS_PATH}`);
 	}
 
 	init(context: vscode.ExtensionContext) {
