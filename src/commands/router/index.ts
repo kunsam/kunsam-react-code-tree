@@ -5,10 +5,15 @@ import * as vscode from "vscode";
 import { ROOT_PATH, PROJECT_DIR } from '../../config'
 import { KRouterTree, KRouter } from './routerTree';
 import { pickFiles2Open, getFileAbsolutePath, GotoTextDocument } from '../../extensionUtil';
+import { groupBy } from 'lodash'
+import { ShowFileParentsInPickDataNode } from './type';
+
+
 
 export default class RoutersCommand {
 
 	public kRouterTree: KRouterTree;
+	private _queryFilesResultCacheMap: Map<string, { result: ShowFileParentsInPickDataNode[], lastQueryTime: number }> = new Map();
 
 	constructor(context: vscode.ExtensionContext) {
 		this.init(context)
@@ -46,27 +51,30 @@ export default class RoutersCommand {
 				vscode.window.showInformationMessage('不存在打开的文档')
 				return;
 			}
-			const parents = this.recursiveGetParentsDepthFirt(uri.fsPath, [], new Map(), 0)
-			let currentDepth = 0
-			let sortResult: { path: string, depth: number }[] = []
-			let result: { path: string, depth: number }[] = []
-			let maxDepth = Math.max(...parents.map(p => p.depth))
-			parents.forEach(p => {
-				if (currentDepth > p.depth) {
-					result = result.concat(sortResult.reverse())
-					currentDepth = p.depth
-					sortResult = []
+
+			const getResults = () => {
+				const currentTime = new Date().getTime()
+				const cacheResult = this._queryFilesResultCacheMap.get(uri.fsPath)
+				if (cacheResult) {
+					const deltaMinute = (currentTime - cacheResult.lastQueryTime) / (1000 * 60)
+					if (deltaMinute < 30) {
+						this._queryFilesResultCacheMap.delete(uri.fsPath)
+					} else {
+						if (cacheResult.result.length) {
+							return cacheResult.result
+						}
+					}
 				}
-				sortResult.push({ path: p.path, depth: maxDepth - p.depth })
-				currentDepth = p.depth + 1
-			})
-			if (sortResult.length) {
-				result = result.concat(sortResult.reverse())
+				const result = this.getFilesParentsResultShowInPick(uri)
+				// console.log(uri, parents, result,groupByParents, 'parentsparentsparents')
+				this._queryFilesResultCacheMap.set(uri.fsPath, { result, lastQueryTime: new Date().getTime() })
+				return result
 			}
-			pickFiles2Open(result.map(r => (
+			const result  = getResults()
+			pickFiles2Open(result.map(r => r.labelOnly ? ({ label: r.label, target: r.path }) : (
 				{
-					label: `${new Array(r.depth).fill('    ').join('')}|-${path.relative(ROOT_PATH, r.path)}`,
-					target: r.path
+					target: r.path,
+					label: `${new Array(r.depth).fill('    ').join('')}➡️${path.relative(ROOT_PATH, r.path)}`,
 				})), false)
 		}))
 
@@ -117,6 +125,47 @@ export default class RoutersCommand {
 					this.recursiveGetParents(p, result, preventLoopMap)
 				}
 			})
+		}
+		return result;
+	}
+
+	getFilesParentsResultShowInPick(uri: vscode.Uri) {
+		const parents = this.recursiveGetParentsDepthFirt(uri.fsPath, [], new Map(), 0)
+		let currentDepth = 0
+		const groupByParents = groupBy(parents, p => p.depth);
+		let result: ShowFileParentsInPickDataNode[] = []
+		let currentResult: ShowFileParentsInPickDataNode[] = []
+		const writeCurrentResult = () => {
+			if (!currentResult.length) {
+				return
+			}
+			let text: string = ''
+			const lastResult = currentResult[currentResult.length - 1]
+			const splitedPaths = lastResult.path.split('/')
+			if (splitedPaths.length >= 2) {
+				text = splitedPaths[splitedPaths.length - 2] + '/' + splitedPaths[splitedPaths.length - 1]
+			}
+			result.push({ labelOnly: true, path: lastResult.path, label: `----------${text}`, depth: 0 })
+			result = result.concat(currentResult)
+		}
+		parents.forEach(p => {
+			if (currentDepth > p.depth) {
+				writeCurrentResult()
+				currentDepth = p.depth
+				currentResult = []
+				if (currentDepth > 0) {
+					for (let i = 0;i <= currentDepth - 1;i++) {
+						groupByParents[i].forEach(d => {
+							currentResult.push({ path: d.path, depth: d.depth })
+						})
+					}
+				}
+			}
+			currentResult.push({ path: p.path, depth: p.depth })
+			currentDepth = p.depth + 1
+		})
+		if (currentResult.length) {
+			writeCurrentResult()
 		}
 		return result;
 	}

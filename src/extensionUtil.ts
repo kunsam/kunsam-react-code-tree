@@ -83,7 +83,11 @@ export function GotoTextDocument(trueFsPath: string) {
  * @export
  * @param {string[]} files
  */
-export function pickFiles2Open(files: { label: string, target: string}[], isOpenFirst = true) {
+export function pickFiles2Open(files: { label: string, target?: string}[], isOpenFirst = true) {
+	if (!files.length) {
+		vscode.window.showInformationMessage('暂无结果')
+		return
+	}
 	if (files.length === 1 && isOpenFirst) {
 		GotoTextDocument( getFileAbsolutePath(files[0].target, false) )
 	} else {
