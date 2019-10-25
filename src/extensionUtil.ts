@@ -83,7 +83,7 @@ export function GotoTextDocument(trueFsPath: string) {
  * @export
  * @param {string[]} files
  */
-export function pickFiles2Open(files: { label: string, target?: string}[], isOpenFirst = true) {
+export function pickFiles2Open(files: { label: string, target?: string}[], isOpenFirst = true, placeHolder = '请选择打开的文件') {
 	if (!files.length) {
 		vscode.window.showInformationMessage('暂无结果')
 		return
@@ -93,7 +93,7 @@ export function pickFiles2Open(files: { label: string, target?: string}[], isOpe
 	} else {
 		if (files.length) {
 			vscode.window.showQuickPick(files, {
-				placeHolder: '请选择打开的文件',
+				placeHolder,
 			}).then(result => {
 				if (result && result.target) {
 					GotoTextDocument(getFileAbsolutePath(result.target, false))

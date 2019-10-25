@@ -82,6 +82,18 @@
       {
         "command": "kReactRouterTree.showFileParentsInPick",
         "title": "show file parents"
+      },
+      {
+        "command": "kReactCodeTree.queryStoreManagedFields",
+        "title": "query Store Managed Fields"
+      },
+      {
+        "command": "kReactCodeTree.queryStoreConnectOutFields",
+        "title": "query Store ConnectOut Fields"
+      },
+      {
+        "command": "kReactCodeTree.queryStoreAllFields",
+        "title": "query Store All Fields"
       }
     ],
     "keybindings": [
@@ -107,6 +119,21 @@
         "mac": "cmd+4 cmd+4",
         "key": "ctrl+4 ctrl+4",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "kReactCodeTree.queryStoreManagedFields",
+        "mac": "cmd+o cmd+8",
+        "key": "ctrl+o ctrl+8"
+      },
+      {
+        "command": "kReactCodeTree.queryStoreConnectOutFields",
+        "mac": "cmd+o cmd+9",
+        "key": "ctrl+o ctrl+9"
+      },
+      {
+        "command": "kReactCodeTree.queryStoreAllFields",
+        "mac": "cmd+o cmd+0",
+        "key": "ctrl+o ctrl+0"
       }
     ],
     "menus": {
