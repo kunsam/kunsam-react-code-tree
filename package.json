@@ -94,6 +94,10 @@
       {
         "command": "kReactCodeTree.queryStoreAllFields",
         "title": "query Store All Fields"
+      },
+      {
+        "command": "kReactCodeTree.activeStoreManager",
+        "title": "activeStoreManager"
       }
     ],
     "keybindings": [
@@ -134,6 +138,11 @@
         "command": "kReactCodeTree.queryStoreAllFields",
         "mac": "cmd+o cmd+0",
         "key": "ctrl+o ctrl+0"
+      },
+      {
+        "command": "kReactCodeTree.activeStoreManager",
+        "mac": "cmd+o cmd+-",
+        "key": "ctrl+o ctrl+-"
       }
     ],
     "menus": {
