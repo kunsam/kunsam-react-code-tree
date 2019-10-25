@@ -28,8 +28,10 @@ export function activate(context: vscode.ExtensionContext) {
       const className = splited.join('')
       vscode.env.clipboard.writeText(`export class ${className} extends AppAction {
         id = '${text}'
-        reducer: AppReducer<{ field: any }> = function (_, action) {
-          return { field: action.response }
+        reducer: AppReducer<{ field: any }> = function (state, action) {
+          return {
+
+          }
         }
       }
       StoreName.registerActions([ new ${className}() ])
@@ -63,9 +65,9 @@ export function activate(context: vscode.ExtensionContext) {
     }
   })
 
-  new NodeFlowCommands(context)
-  new KeybindingCommands(context)
-  new RoutersCommand(context)
+  // new NodeFlowCommands(context)
+  // new KeybindingCommands(context)
+  // new RoutersCommand(context)
 
   // vscode.workspace.openTextDocument('/Users/kunsam/Downloads/le-project/wechat-web/src/app/reducers/next/current_customer_reducer.ts').then(doc => {
   //   // vscode.window.showTextDocument(doc).then(editor => {
@@ -80,17 +82,25 @@ export function activate(context: vscode.ExtensionContext) {
   // })
 
   context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.activeStoreManager', () => {
-    const leStoreManager = new LeStoreManager()
-    context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreManagedFields', () => {
-        leStoreManager.queryManageFileds()
-    }))
-    context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreConnectOutFields', () => {
-      leStoreManager.queryOutStoreFileds()
-    }))
-    context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreAllFields', () => {
-      leStoreManager.queryAllFields()
-    }))
-    vscode.window.showInformationMessage('激活Le-Store仓库管理')
+    try {
+      const leStoreManager = new LeStoreManager()
+      context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreManagedFields', () => {
+          leStoreManager.queryManageFileds()
+      }))
+      context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreConnectOutFields', () => {
+        leStoreManager.queryOutStoreFileds()
+      }))
+      context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreAllFields', () => {
+        leStoreManager.queryAllFields()
+      }))
+      vscode.commands.registerCommand("kReactCodeTree.refresh", () => {
+        leStoreManager.reset();
+      });
+      vscode.window.showInformationMessage('激活Le-Store仓库管理')
+    } catch (e) {
+      console.log(e, 'registedActions');
+    }
+
   }))
 
 

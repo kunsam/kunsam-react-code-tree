@@ -32,11 +32,11 @@ export function getStoreManagerFields(fileNames: string[], options: ts.CompilerO
 					nodesOfFile.forEachChild(child => {
 						child.forEachChild(cchild => {
 							if (cchild.kind === ts.SyntaxKind.PropertyAccessExpression) {
-								storeName = cchild.getText().replace(/\.registerActions/g, '')
+								storeName = cchild.getText().replace(/\.registerActions/g, '').replace('/\s/g', '')
 							}
 						})
 					})
-					registedActions = getResgerActionsNameList(nodesOfFile)
+					registedActions = registedActions.concat(getResgerActionsNameList(nodesOfFile))
 				}
 			})
 			

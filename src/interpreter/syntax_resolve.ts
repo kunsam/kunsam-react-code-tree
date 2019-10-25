@@ -38,8 +38,13 @@ export default class TsSyntaxNodeResolveUtil {
 		node.forEachChild(child => {
 			child.parent = node
 			if (ts.isPropertySignature(child)) {
-				if (ts.isIdentifier(child.getChildAt(0)) && child.getChildAt(1).kind === ts.SyntaxKind.ColonToken) {
-					const childChild2 = child.getChildAt(2);
+				const childChild0 = child.getChildAt(0)
+				const childChild1 = child.getChildAt(1)
+				const childChild2 = child.getChildAt(2);
+				if (!childChild0 || !childChild1 || !childChild2) {
+					return
+				}
+				if (ts.isIdentifier(childChild0) && childChild1.kind === ts.SyntaxKind.ColonToken) {
 					childChild2.parent = child
 					// any[] | { a: number }[] | {a: string, b: any[]}
 					if (ts.isTypeLiteralNode(childChild2) || ts.isArrayTypeNode(childChild2)) {
@@ -48,7 +53,7 @@ export default class TsSyntaxNodeResolveUtil {
 							nextChild.parent = childChild2
 							nodeChildren.push(nextChild)
 						})
-						if (ts.isPropertySignature(nodeChildren[0])) {
+						if (nodeChildren.length && ts.isPropertySignature(nodeChildren[0])) {
 							outPut[child.name.getText(sourceFile)] = this.resolveTypeNode(childChild2, sourceFile)
 						} else {
 							outPut[child.name.getText(sourceFile)] = childChild2.getText(sourceFile)

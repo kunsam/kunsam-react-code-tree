@@ -44,6 +44,14 @@
         }
       },
       {
+        "command": "kReactCodeTree.refreshStoreManager",
+        "title": "Refresh Store Manager[请先激活]",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
         "command": "kReactCodeTree.insertAfter",
         "title": "Insert After"
       },
@@ -97,7 +105,7 @@
       },
       {
         "command": "kReactCodeTree.activeStoreManager",
-        "title": "activeStoreManager"
+        "title": "激活Store Manager"
       },
       {
         "command": "kReactCodeTree.store.getReducerActionClass",
@@ -146,11 +154,6 @@
         "command": "kReactCodeTree.queryStoreAllFields",
         "mac": "cmd+o cmd+0",
         "key": "ctrl+o ctrl+0"
-      },
-      {
-        "command": "kReactCodeTree.activeStoreManager",
-        "mac": "cmd+o cmd+-",
-        "key": "ctrl+o ctrl+-"
       }
     ],
     "menus": {
@@ -158,6 +161,14 @@
       "view/title": [
         {
           "command": "kReactCodeTree.refresh",
+          "when": "view == kReactCodeTree"
+        },
+        {
+          "command": "kReactCodeTree.activeStoreManager",
+          "when": "view == kReactCodeTree"
+        },
+        {
+          "command": "kReactCodeTree.refreshStoreManager",
           "when": "view == kReactCodeTree"
         }
       ],

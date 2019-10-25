@@ -84,30 +84,23 @@ export default class LeStoreManager {
 	private _cacheFields_enterStore: { name: string, location: LeLocation }[] = []
 	private _cacheFields_connectOutStore: { name: string, location: LeLocation }[] = []
 
-	constructor() {
-
+	public reset() {
+		this._cacheFields_regiterState = []
+		this._cacheFields_enterStore = []
+		this._cacheFields_connectOutStore = []
 		const files = this.getFileNames()
 		console.log(files, 'files');
-		// [
-		// 	// '/Users/kunsam/Downloads/le-project/wechat-web/src/app/reducers/next/current_customer_reducer.ts',
-		// 	'/Users/kunsam/Downloads/le-project/wechat-web/src/app/actions/next/current_customer_action.ts'
-		// ]
 		const storeManagerFields = getStoreManagerFields(files.action, {
 			target: ts.ScriptTarget.ES5,
 			isolatedModules: true
 		})
 		console.log(storeManagerFields, 'storeManagerFields');
-		// [
-		// 	'/Users/kunsam/Downloads/le-project/wechat-web/src/app/containers/free_service/free_service_active/index.tsx'
-		// ]
 		const connectOutStoreFields = getConnectOutStoreFields(files.connectedComponent, {
 			jsxFactory: 'react',
 			target: ts.ScriptTarget.ES5,
 			isolatedModules: true
 		})
 		console.log(connectOutStoreFields, 'connectOutStoreFields');
-		// 
-
 		storeManagerFields.enterStore.forEach(once => {
 			once.fileds.forEach((field: string) => {
 				const history = this._enterStoreFiledsMap.get(field) || []
@@ -129,6 +122,9 @@ export default class LeStoreManager {
 				this._connectOutStoreFiledsMap.set(field, history)
 			})
 		})
+	}
+	constructor() {
+		this.reset()
 	}
 
 	public getRegiterStateFields() {

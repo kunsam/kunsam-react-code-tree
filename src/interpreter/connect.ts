@@ -27,7 +27,6 @@ export function getConnectOutStoreFields(fileNames: string[], options: ts.Compil
 				// 只要找到 AppConnect VariableStatement
 				// console.log('\n=============', nodesOfFile.kind, nodesOfFile.getText(), '===========\n');
 				// ClassDeclaration @connect
-
 				if (ts.isClassDeclaration(nodesOfFile)) {
 					if (nodesOfFile.decorators) {
 						nodesOfFile.decorators.forEach(deco => {
@@ -37,9 +36,9 @@ export function getConnectOutStoreFields(fileNames: string[], options: ts.Compil
 								if (ts.isCallExpression(c)) {
 									const typeNode = recursiveGetATypeReferenceNode(c)
 									if (typeNode) {
+										// console.log(typeNode.kind, typeNode.getText(), 'type.AppConnect isClassDeclaration');
 										const type: any = TsSyntaxNodeResolveUtil.resolveTypeReference(typeNode, sourceFile)
 										if (type.AppConnect) {
-											// console.log(type.AppConnect, typeNode.getText(), 'type.AppConnect');
 											const fields = DataTransfromUtil.tranformTypeReferenceResultToFields(type.AppConnect, type.storeName)
 											resultMap.set(fileName, (resultMap.get(fileName) || []).concat(fields))
 										}
@@ -60,7 +59,6 @@ export function getConnectOutStoreFields(fileNames: string[], options: ts.Compil
 								if (typeNode) {
 									const type: any = TsSyntaxNodeResolveUtil.resolveTypeReference(typeNode, sourceFile)
 									if (type.AppConnect) {
-										// console.log(type.AppConnect, typeNode.getText(), 'type.AppConnect 222');
 										const fields = DataTransfromUtil.tranformTypeReferenceResultToFields(type.AppConnect, type.storeName)
 										resultMap.set(fileName, (resultMap.get(fileName) || []).concat(fields))
 									}
