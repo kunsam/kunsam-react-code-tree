@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
       const splited = text.replace(/\_/, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
       splited.shift()
       vscode.env.clipboard.writeText(`export class StoreName.${splited.join('')} extends AppAction {
-        id = ${text}
+        id = '${text}'
         reducer: AppReducer<{ field: any }> = function (_, action) {
           return { field: action.response }
         }
@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
       const splited = text.replace(/\_/, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
       splited.shift()
       vscode.env.clipboard.writeText(`export class StoreName-${splited.join('')} extends AppAction {
-        id = ${text}
+        id = '${text}'
         regiterState = {}
         dispatch = (success = () => {}, error = () => {}) => ({
           type: this.id,
