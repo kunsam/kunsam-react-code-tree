@@ -23,23 +23,27 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("kReactCodeTree.store.getReducerActionClass", () => {
     const text = selectText(false)
     if (text) {
-      const splited = text.replace(/\_/, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
+      const splited = text.replace(/\_/g, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
       splited.shift()
-      vscode.env.clipboard.writeText(`export class StoreName.${splited.join('')} extends AppAction {
+      const className = splited.join('')
+      vscode.env.clipboard.writeText(`export class ${className} extends AppAction {
         id = '${text}'
         reducer: AppReducer<{ field: any }> = function (_, action) {
           return { field: action.response }
         }
-      }`)
+      }
+      StoreName.registerActions([ new ${className}() ])
+      `)
     }
   })
   // 菜单右键 获取DispatchActionClass
   vscode.commands.registerCommand("kReactCodeTree.store.getDispatchActionClass", () => {
     const text = selectText(false)
     if (text) {
-      const splited = text.replace(/\_/, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
+      const splited = text.replace(/\_/g, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
       splited.shift()
-      vscode.env.clipboard.writeText(`export class StoreName-${splited.join('')} extends AppAction {
+      const className = splited.join('')
+      vscode.env.clipboard.writeText(`export class ${className} extends AppAction {
         id = '${text}'
         regiterState = {}
         dispatch = (success = () => {}, error = () => {}) => ({
@@ -53,7 +57,9 @@ export function activate(context: vscode.ExtensionContext) {
             query: '___'
           }
         })
-      }`)
+      }
+      StoreName.registerActions([ new ${className}() ])
+      `)
     }
   })
 
