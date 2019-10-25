@@ -98,6 +98,14 @@
       {
         "command": "kReactCodeTree.activeStoreManager",
         "title": "activeStoreManager"
+      },
+      {
+        "command": "kReactCodeTree.store.getReducerActionClass",
+        "title": "get Reducer Action Class"
+      },
+      {
+        "command": "kReactCodeTree.store.getDispatchActionClass",
+        "title": "get Dispatch Action Class"
       }
     ],
     "keybindings": [
@@ -182,6 +190,16 @@
           "when": "editorTextFocus",
           "command": "extension.getFileAppUrl",
           "group": "navigation@5"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "kReactCodeTree.store.getReducerActionClass",
+          "group": "navigation@8"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "kReactCodeTree.store.getDispatchActionClass",
+          "group": "navigation@9"
         }
       ]
     },

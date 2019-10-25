@@ -1,14 +1,13 @@
 "use strict";
 import * as vscode from "vscode";
-import KeybindingCommands from './commands/keybinding';
-import NodeFlowCommands from './commands/nodeflow';
+import { selectText } from "./select";
 import RoutersCommand from './commands/router';
-import { generateDocumentation } from "./compiler";
-import * as ts from "typescript";
-import { getStoreManagerFields } from './interpreter/action'
-import { getConnectOutStoreFields } from "./interpreter/connect";
+import NodeFlowCommands from './commands/nodeflow';
+import KeybindingCommands from './commands/keybinding';
 import LeStoreManager from "./commands/lestore/lestoremanager";
 
+import { toLower, upperFirst } from 'lodash'
+ 
 export function activate(context: vscode.ExtensionContext) {
 
 
@@ -19,6 +18,44 @@ export function activate(context: vscode.ExtensionContext) {
         openToSide: true
       });
   }));
+
+  // 菜单右键 获取ActionReducerClass
+  vscode.commands.registerCommand("kReactCodeTree.store.getReducerActionClass", () => {
+    const text = selectText(false)
+    if (text) {
+      const splited = text.replace(/\_/, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
+      splited.shift()
+      vscode.env.clipboard.writeText(`export class StoreName.${splited.join('')} extends AppAction {
+        id = ${text}
+        reducer: AppReducer<{ field: any }> = function (_, action) {
+          return { field: action.response }
+        }
+      }`)
+    }
+  })
+  // 菜单右键 获取DispatchActionClass
+  vscode.commands.registerCommand("kReactCodeTree.store.getDispatchActionClass", () => {
+    const text = selectText(false)
+    if (text) {
+      const splited = text.replace(/\_/, ':').split(':').map(t => upperFirst(toLower(t))).concat(['Action'])
+      splited.shift()
+      vscode.env.clipboard.writeText(`export class StoreName-${splited.join('')} extends AppAction {
+        id = ${text}
+        regiterState = {}
+        dispatch = (success = () => {}, error = () => {}) => ({
+          type: this.id,
+          API: true,
+          method: 'POST',
+          url: '/api/query',
+          success,
+          error,
+          data: {
+            query: '___'
+          }
+        })
+      }`)
+    }
+  })
 
   new NodeFlowCommands(context)
   new KeybindingCommands(context)
