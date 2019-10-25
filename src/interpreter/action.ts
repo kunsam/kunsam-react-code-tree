@@ -9,10 +9,10 @@ export type StoreManagerFields = {
 }[]
 
 export function getStoreManagerFields(fileNames: string[], options: ts.CompilerOptions): { enterStore: StoreManagerFields, regiterState: StoreManagerFields } {
-  // Build a program using the set of root file names in fileNames
-  let program = ts.createProgram(fileNames, options);
+	// Build a program using the set of root file names in fileNames
+	let program = ts.createProgram(fileNames, options);
 
-  // Get the checker, we will use it to find more about classes
+	// Get the checker, we will use it to find more about classes
 	let checker = program.getTypeChecker();
 
 	let result: {
@@ -22,24 +22,25 @@ export function getStoreManagerFields(fileNames: string[], options: ts.CompilerO
 
 	for (const fileName of fileNames) {
 		const sourceFile = program.getSourceFile(fileName)
-    if (!sourceFile.isDeclarationFile) {
-      // Walk the tree to search for classes
+		if (!sourceFile.isDeclarationFile) {
+			// Walk the tree to search for classes
 			// ts.forEachChild(sourceFile, visit);
 			let registedActions = []
 			let storeName = ''
 			sourceFile.forEachChild((nodesOfFile) => {
-				if (nodesOfFile.kind === ts.SyntaxKind.ExpressionStatement && nodesOfFile.getText().includes('registerActions')) {
+				if (nodesOfFile.kind === ts.SyntaxKind.ExpressionStatement && (nodesOfFile.getText().includes('registerAction') || nodesOfFile.getText().includes('registerActions'))) {
 					nodesOfFile.forEachChild(child => {
 						child.forEachChild(cchild => {
 							if (cchild.kind === ts.SyntaxKind.PropertyAccessExpression) {
-								storeName = cchild.getText().replace(/\.registerActions/g, '').replace('/\s/g', '')
+								storeName = cchild.getText().replace(/\.registerActions?/g, '').replace('/\s/g', '')
 							}
 						})
 					})
-					registedActions = registedActions.concat(getResgerActionsNameList(nodesOfFile))
+					registedActions = registedActions.concat(getResgerActionsNameList(nodesOfFile, 'registerAction'))
 				}
 			})
-			
+
+			// console.log(registedActions, 'registedActions');
 			const actionsData = getActionsData(registedActions, sourceFile, checker)
 			// console.log(actionsData, 'actionsData');
 			actionsData.forEach(action => {
@@ -57,8 +58,8 @@ export function getStoreManagerFields(fileNames: string[], options: ts.CompilerO
 						fileds: DataTransfromUtil.tranformTypeReferenceResultToFields(action.reducer.AppReducer, storeName)
 					})
 				}
-			})              
-    }
+			})
+		}
 	}
 
 	return result

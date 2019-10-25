@@ -27,14 +27,14 @@ export function activate(context: vscode.ExtensionContext) {
       splited.shift()
       const className = splited.join('')
       vscode.env.clipboard.writeText(`export class ${className} extends AppAction {
-        id = '${text}'
+        static id = '${text}'
         reducer: AppReducer<{ field: any }> = function (state, action) {
           return {
 
           }
         }
       }
-      StoreName.registerActions([ new ${className}() ])
+      StoreName.registerAction(${className})
       `)
     }
   })
@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
       splited.shift()
       const className = splited.join('')
       vscode.env.clipboard.writeText(`export class ${className} extends AppAction {
-        id = '${text}'
+        static id = '${text}'
         regiterState = {}
         dispatch = (success = () => {}, error = () => {}) => ({
           type: this.id,
@@ -60,14 +60,14 @@ export function activate(context: vscode.ExtensionContext) {
           }
         })
       }
-      StoreName.registerActions([ new ${className}() ])
+      StoreName.registerAction(className)
       `)
     }
   })
 
-  // new NodeFlowCommands(context)
-  // new KeybindingCommands(context)
-  // new RoutersCommand(context)
+  new NodeFlowCommands(context)
+  new KeybindingCommands(context)
+  new RoutersCommand(context)
 
   // vscode.workspace.openTextDocument('/Users/kunsam/Downloads/le-project/wechat-web/src/app/reducers/next/current_customer_reducer.ts').then(doc => {
   //   // vscode.window.showTextDocument(doc).then(editor => {
@@ -81,9 +81,11 @@ export function activate(context: vscode.ExtensionContext) {
   //   console.log(newText, 'newTextnewText');
   // })
 
+  let leStoreManager: LeStoreManager | undefined
   context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.activeStoreManager', () => {
+    if (leStoreManager) return
     try {
-      const leStoreManager = new LeStoreManager()
+      leStoreManager = new LeStoreManager()
       context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreManagedFields', () => {
           leStoreManager.queryManageFileds()
       }))
@@ -93,15 +95,19 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(vscode.commands.registerCommand('kReactCodeTree.queryStoreAllFields', () => {
         leStoreManager.queryAllFields()
       }))
-      vscode.commands.registerCommand("kReactCodeTree.refresh", () => {
-        leStoreManager.reset();
-      });
       vscode.window.showInformationMessage('激活Le-Store仓库管理')
     } catch (e) {
       console.log(e, 'registedActions');
     }
-
   }))
+
+  vscode.commands.registerCommand("kReactCodeTree.refreshStoreManager", () => {
+    if (!leStoreManager) {
+      vscode.window.showInformationMessage('请先激活Le-Store仓库管理')
+      return
+    }
+    leStoreManager.reset();
+  });
 
 
 }

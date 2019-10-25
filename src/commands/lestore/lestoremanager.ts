@@ -133,7 +133,7 @@ export default class LeStoreManager {
 		}
 		this._regiterStateFiledsMap.forEach((value, key) => {
 			value.forEach(location => {
-				this._cacheFields_regiterState.push({ name: key, location })
+				this._cacheFields_regiterState.push({ name: key + (location.symbol ? `--${location.symbol}` : ''), location })
 			})
 		})
 		return this._cacheFields_regiterState
@@ -145,7 +145,7 @@ export default class LeStoreManager {
 		}
 		this._enterStoreFiledsMap.forEach((value, key) => {
 			value.forEach(location => {
-				this._cacheFields_enterStore.push({ name: key, location })
+				this._cacheFields_enterStore.push({ name: key+ (location.symbol ? `--${location.symbol}` : ''), location })
 			})
 		})
 		return this._cacheFields_enterStore
@@ -157,7 +157,7 @@ export default class LeStoreManager {
 		}
 		this._connectOutStoreFiledsMap.forEach((value, key) => {
 			value.forEach(location => {
-				this._cacheFields_connectOutStore.push({ name: key, location })
+				this._cacheFields_connectOutStore.push({ name: key + (location.symbol ? `--${location.symbol}` : ''), location })
 			})
 		})
 		return this._cacheFields_connectOutStore
@@ -171,7 +171,7 @@ export default class LeStoreManager {
 		})
 		result.push({ label: '📩入库列表-----' })
 		this.getEnterstoreFields().forEach(data => {
-			result.push({ label: '  ' + data.name + '    📩', target: data.location.filePath })
+			result.push({ label: '  ' + data.name  + '    📩', target: data.location.filePath })
 		})
 		return result
 	}

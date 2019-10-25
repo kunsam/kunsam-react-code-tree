@@ -44,14 +44,6 @@
         }
       },
       {
-        "command": "kReactCodeTree.refreshStoreManager",
-        "title": "Refresh Store Manager[请先激活]",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
         "command": "kReactCodeTree.insertAfter",
         "title": "Insert After"
       },
@@ -106,6 +98,14 @@
       {
         "command": "kReactCodeTree.activeStoreManager",
         "title": "激活Store Manager"
+      },
+      {
+        "command": "kReactCodeTree.refreshStoreManager",
+        "title": "Refresh Store Manager",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
       },
       {
         "command": "kReactCodeTree.store.getReducerActionClass",

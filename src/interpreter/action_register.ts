@@ -11,18 +11,20 @@ import TsSyntaxNodeResolveUtil from "./syntax_resolve";
  * @export
  * @param {ts.Node} node
  */
-export function getResgerActionsNameList(node: ts.Node): string[] {
+export function getResgerActionsNameList(node: ts.Node, dispatchFunctionName: string): string[] {
   let list = [];
   if (node.kind === 222) {
     // ExpressionStatement
     ts.forEachChild(node, child => {
       const cchildren = child.getChildren();
-      // console.log(cchildren.map(c => c.kind), cchildren.map(c => c.getText() + '\n'), 'cchildrencchildren');
+
       if (cchildren.length >= 2) {
         const functionDispatcher = cchildren[0].getText();
-        if (functionDispatcher.includes("registerActions")) {
+        // console.log(functionDispatcher, 'functionDispatcher');
+        if (functionDispatcher.includes(dispatchFunctionName)) {
           if (cchildren[0].kind === 190 && cchildren[2].kind === 314) {
             cchildren[2].getChildren().forEach(ccchild => {
+              // console.log(cchildren[2].getChildren().map(c => c.kind), cchildren[2].getChildren().map(c => c.getText() + '\n'), 'cchildrencchildren');
               ccchild.getChildren().forEach(cccchild => {
                 if (cccchild.kind === 314) {
                   cccchild.getChildren().forEach(ccccchild => {
@@ -33,6 +35,10 @@ export function getResgerActionsNameList(node: ts.Node): string[] {
                   });
                 }
               });
+              // 注意由调用方式不同可能存在多种可能
+              if (ccchild.kind === 73) {
+                list.push(ccchild.getText());
+              }
             });
           }
         }
