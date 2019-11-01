@@ -1,6 +1,5 @@
 import * as ts from "typescript";
 import * as fs from "fs";
-import { getResgerActionsNameList } from "./interpreter/action_register";
 
 interface DocEntry {
   name?: string;

@@ -94,3 +94,16 @@ export type KC_Node = {
 # TODO
 - 增加基于路由的场景筛选
 - 增加节点直接访问产品文档/设计图的链接功能
+
+
+TODO 把typescript compiler发布成一个独立的npm包
+用于获得 ts文档
+1. import 目标名称和路径 包括动态import
+2. 给定import名称返回sourcefile
+3. 给定sourcefile 查询文档class相关细节
+4. 给定sourcefile 查询 LET/Const节点
+4. 给定sourcefile 指定query语句 查询对应节点结果
+5. 一些函数需求[目前暂时没有]
+
+后台使用该库翻译项目 并且留下数据
+extension发送api请求该数据..

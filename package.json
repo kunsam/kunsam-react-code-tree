@@ -108,12 +108,8 @@
         }
       },
       {
-        "command": "kReactCodeTree.store.getReducerActionClass",
-        "title": "get Reducer Action Class"
-      },
-      {
-        "command": "kReactCodeTree.store.getDispatchActionClass",
-        "title": "get Dispatch Action Class"
+        "command": "kReactCodeTree.store.getActionClass",
+        "title": "Get Action Class"
       }
     ],
     "keybindings": [
@@ -204,13 +200,8 @@
         },
         {
           "when": "editorTextFocus",
-          "command": "kReactCodeTree.store.getReducerActionClass",
+          "command": "kReactCodeTree.store.getActionClass",
           "group": "navigation@8"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "kReactCodeTree.store.getDispatchActionClass",
-          "group": "navigation@9"
         }
       ]
     },
@@ -236,6 +227,7 @@
     "webpack-cli": "^3.3.9"
   },
   "dependencies": {
+    "le-ts-code-tool": "^1.0.10",
     "lodash": "^4.17.15"
   }
 }
