@@ -2,7 +2,7 @@
   "name": "kunsam-react-code-tree",
   "description": "vscode extension with tree provider tool for react app coder",
   "repository": "https://github.com/kunsam/kunsam-react-code-tree.git",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "publisher": "kunsam",
   "engines": {
     "vscode": "^1.36.0"
