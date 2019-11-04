@@ -108,8 +108,16 @@
         }
       },
       {
-        "command": "kReactCodeTree.store.getActionClass",
-        "title": "Get Action Class"
+        "command": "kReactCodeTree.store.getActionClassOldActionId",
+        "title": "* Get ActionClass By OldAction ID"
+      },
+      {
+        "command": "kReactCodeTree.store.getActionClassByQueryString",
+        "title": "* Get ActionClass By Query String"
+      },
+      {
+        "command": "kReactCodeTree.store.getActionClassByQueryStringSimple",
+        "title": "* Get ActionClass By Query String[简单版]"
       }
     ],
     "keybindings": [
@@ -186,11 +194,6 @@
         {
           "when": "editorTextFocus",
           "command": "extension.getKReactNodeCode",
-          "group": "navigation@7"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "extension.addOpenAsideToContextMenu",
           "group": "navigation@6"
         },
         {
@@ -200,8 +203,18 @@
         },
         {
           "when": "editorTextFocus",
-          "command": "kReactCodeTree.store.getActionClass",
+          "command": "kReactCodeTree.store.getActionClassOldActionId",
+          "group": "navigation@7"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "kReactCodeTree.store.getActionClassByQueryString",
           "group": "navigation@8"
+        },
+        {
+          "when": "editorTextFocus",
+          "command": "kReactCodeTree.store.getActionClassByQueryStringSimple",
+          "group": "navigation@9"
         }
       ]
     },
@@ -227,7 +240,7 @@
     "webpack-cli": "^3.3.9"
   },
   "dependencies": {
-    "le-ts-code-tool": "^1.0.10",
+    "le-ts-code-tool": "^1.0.20",
     "lodash": "^4.17.15"
   }
 }

@@ -14,11 +14,11 @@ export default class KeybindingCommands {
 	init() {
 		// 选中括号/引号内
 		vscode.commands.registerCommand("extension.selectBracket", () => {
-			selectText(false);
+			selectText({ includeBrack: false });
 		})
 		// 跳转相对路径
 		vscode.commands.registerCommand("kReactCodeTree.gotoRelative", () => {
-			const text = selectText(false)
+			const text = selectText({ includeBrack: false })
 			const trueFsPath = getFileAbsolutePath(text)
 			GotoTextDocument(trueFsPath)
 		})

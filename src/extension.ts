@@ -5,28 +5,28 @@ import RoutersCommand from "./commands/router";
 import NodeFlowCommands from "./commands/nodeflow";
 import KeybindingCommands from "./commands/keybinding";
 import LeStoreManager from "./commands/lestore/lestoremanager";
-
+import { ActionClassCoder } from "le-ts-code-tool";
 import { toLower, upperFirst } from "lodash";
 
 export function activate(context: vscode.ExtensionContext) {
   // 在文档右侧打开定义
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "extension.addOpenAsideToContextMenu",
-      async () => {
-        await vscode.commands.executeCommand(
-          "editor.action.revealDefinitionAside",
-          {
-            openToSide: true
-          }
-        );
-      }
-    )
-  );
+  // context.subscriptions.push(
+  //   vscode.commands.registerCommand(
+  //     "extension.addOpenAsideToContextMenu",
+  //     async () => {
+  //       await vscode.commands.executeCommand(
+  //         "editor.action.revealDefinitionAside",
+  //         {
+  //           openToSide: true
+  //         }
+  //       );
+  //     }
+  //   )
+  // );
 
   // 菜单右键 获取ActionReducerClass
   vscode.commands.registerCommand("kReactCodeTree.store.getActionClass", () => {
-    const text = selectText(false);
+    const text = selectText({ includeBrack: false });
     if (text) {
       const splited = text
         .replace(/\_/g, ":")
@@ -40,7 +40,6 @@ export function activate(context: vscode.ExtensionContext) {
         static id = '${text}'
         reducer: AppReducer<{ field: any }> = function (state, action) {
           return {
-
           }
         }
       }
@@ -49,9 +48,37 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  new NodeFlowCommands(context)
-  new KeybindingCommands(context)
-  new RoutersCommand(context)
+  // 菜单右键 获取 getActionClassByQueryString
+  vscode.commands.registerCommand(
+    "kReactCodeTree.store.getActionClassByQueryString",
+    () => {
+      const qltext = selectText({
+        includeBrack: false,
+        disableOpenCloseBrack: true
+      });
+      const text = ActionClassCoder.getActionClassByQueryString(qltext);
+      vscode.env.clipboard.writeText(text).then(() => {
+        vscode.window.showInformationMessage("成功复制到剪切板");
+      });
+    }
+  );
+  vscode.commands.registerCommand(
+    "kReactCodeTree.store.getActionClassByQueryStringSimple",
+    () => {
+      const qltext = selectText({
+        includeBrack: false,
+        disableOpenCloseBrack: true
+      });
+      const text = ActionClassCoder.getActionClassSimpleByQueryString(qltext);
+      vscode.env.clipboard.writeText(text).then(() => {
+        vscode.window.showInformationMessage("成功复制到剪切板");
+      });
+    }
+  );
+
+  new NodeFlowCommands(context);
+  new KeybindingCommands(context);
+  new RoutersCommand(context);
 
   let leStoreManager: LeStoreManager | undefined;
   context.subscriptions.push(
@@ -59,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (leStoreManager) return;
       try {
         leStoreManager = new LeStoreManager();
-        leStoreManager.run(context)
+        leStoreManager.run(context);
         context.subscriptions.push(
           vscode.commands.registerCommand(
             "kReactCodeTree.queryStoreManagedFields",
