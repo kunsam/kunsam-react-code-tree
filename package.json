@@ -3,6 +3,7 @@
   "description": "vscode extension with tree provider tool for react app coder",
   "repository": "https://github.com/kunsam/kunsam-react-code-tree.git",
   "version": "0.27.0",
+  "icon": "https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/avatar.jpg",
   "publisher": "kunsam",
   "engines": {
     "vscode": "^1.36.0"
@@ -37,7 +38,7 @@
     "commands": [
       {
         "command": "kReactCodeTree.refresh",
-        "title": "Refresh",
+        "title": "Refresh WorkFlow",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -72,10 +73,6 @@
         "title": "* Get kReactCodeTree Node Code"
       },
       {
-        "command": "extension.addOpenAsideToContextMenu",
-        "title": "* Open Definition Aside"
-      },
-      {
         "command": "extension.getFileAppUrl",
         "title": "* Get File App Url"
       },
@@ -97,15 +94,15 @@
       },
       {
         "command": "kReactCodeTree.activeStoreManager",
-        "title": "激活Store Manager"
+        "title": "激活 StoreManager"
+      },
+      {
+        "command": "kReactCodeTree.activeRouterManager",
+        "title": "激活 RouterManager"
       },
       {
         "command": "kReactCodeTree.refreshStoreManager",
-        "title": "Refresh Store Manager",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "title": "Refresh StoreManager"
       },
       {
         "command": "kReactCodeTree.store.getActionClassOldActionId",
@@ -165,15 +162,23 @@
       "view/title": [
         {
           "command": "kReactCodeTree.refresh",
-          "when": "view == kReactCodeTree"
+          "when": "view == kReactCodeTree",
+          "group": "myGroup@1"
+        },
+        {
+          "command": "kReactCodeTree.activeRouterManager",
+          "when": "view == kReactCodeTree",
+          "group": "myGroup@2"
         },
         {
           "command": "kReactCodeTree.activeStoreManager",
-          "when": "view == kReactCodeTree"
+          "when": "view == kReactCodeTree",
+          "group": "myGroup@3"
         },
         {
           "command": "kReactCodeTree.refreshStoreManager",
-          "when": "view == kReactCodeTree"
+          "when": "view == kReactCodeTree",
+          "group": "myGroup@4"
         }
       ],
       "view/item/context": [
@@ -240,7 +245,8 @@
     "webpack-cli": "^3.3.9"
   },
   "dependencies": {
-    "le-ts-code-tool": "^1.0.20",
+    "file-system": "^2.2.2",
+    "le-ts-code-tool": "^1.0.36",
     "lodash": "^4.17.15"
   }
 }

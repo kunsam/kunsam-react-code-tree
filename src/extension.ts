@@ -8,22 +8,7 @@ import LeStoreManager from "./commands/lestore/lestoremanager";
 import { ActionClassCoder } from "le-ts-code-tool";
 import { toLower, upperFirst } from "lodash";
 
-export function activate(context: vscode.ExtensionContext) {
-  // 在文档右侧打开定义
-  // context.subscriptions.push(
-  //   vscode.commands.registerCommand(
-  //     "extension.addOpenAsideToContextMenu",
-  //     async () => {
-  //       await vscode.commands.executeCommand(
-  //         "editor.action.revealDefinitionAside",
-  //         {
-  //           openToSide: true
-  //         }
-  //       );
-  //     }
-  //   )
-  // );
-
+export async function activate(context: vscode.ExtensionContext) {
   // 菜单右键 获取ActionReducerClass
   vscode.commands.registerCommand("kReactCodeTree.store.getActionClass", () => {
     const text = selectText({ includeBrack: false });
@@ -81,12 +66,14 @@ export function activate(context: vscode.ExtensionContext) {
     > {
       return new Promise(resolve => {
         const item = new vscode.CompletionItem(
-          "le_at_generate: " + 'AppAction',
+          "le_at_generate: " + "AppAction",
           vscode.CompletionItemKind.Class
         );
-        item.detail = 'LeTote New Action'
-        item.insertText = ActionClassCoder.getActionClassSimpleByQueryString('');
-        resolve([ item ]);
+        item.detail = "LeTote New Action";
+        item.insertText = ActionClassCoder.getActionClassSimpleByQueryString(
+          ""
+        );
+        resolve([item]);
       });
     }
   }
@@ -101,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
       new ActionCompletitionProvider(),
       "leatg"
     )
-  )
+  );
 
   new NodeFlowCommands(context);
   new KeybindingCommands(context);

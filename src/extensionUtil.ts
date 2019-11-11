@@ -13,10 +13,13 @@ import { ROOT_PATH } from "./config";
  */
 export function getFileAbsolutePath(filePath: string, isRelative = true) {
   // 没带后缀
-  const fsPath = isRelative
+  let fsPath = isRelative
     ? path.resolve(path.join(ROOT_PATH, filePath))
     : filePath;
+  fsPath = fsPath.replace(/\'|\"/g, "");
   let trueFsPath = "";
+  // console.log(fsPath, fs.existsSync(fsPath), "fs.existsSync(fsPath)");
+  // /Users/kunsam/Downloads/le-project/wechat-web/src/app/components/customer_photos/customer_photos_in_home/item.jsx
   if (fs.existsSync(fsPath)) {
     if (fs.statSync(fsPath).isDirectory()) {
       let NoneJSIndexes = [];
@@ -81,9 +84,9 @@ export function GotoTextDocument(trueFsPath: string, location?: any) {
                 location.range.end.line,
                 location.range.end.character
               )
-						);
-						editor.selection = newSelection;
-						editor.revealRange(newSelection)
+            );
+            editor.selection = newSelection;
+            editor.revealRange(newSelection);
           }
         });
       });

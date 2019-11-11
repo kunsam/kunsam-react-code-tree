@@ -1,9 +1,16 @@
 import * as fs from "fs";
+import * as fse from "file-system";
 import * as path from "path";
 import * as vscode from "vscode";
 import { ROOT_PATH, PROJECT_DIR } from "../../config";
 import { pickFiles2Open } from "../../extensionUtil";
 import { LeActionManager, LeTsCode } from "le-ts-code-tool";
+
+const CACHE_PATH = path.join(
+  ROOT_PATH,
+  PROJECT_DIR,
+  "/data-cache/leactionmanager-cache.json"
+);
 
 export default class LeStoreManager {
   loadConfig() {
@@ -21,10 +28,33 @@ export default class LeStoreManager {
     config.projectDirPath = ROOT_PATH;
     if (!this._leActionManager) {
       this._leActionManager = new LeActionManager(config, {
-        useCase: true
+        useCache: true,
+        loadCache: () => {
+          if (fs.existsSync(CACHE_PATH)) {
+            try {
+              const json = __non_webpack_require__(`${CACHE_PATH}`);
+              if (json) {
+                return {
+                  result: json,
+                  hasCache: true
+                };
+              }
+            } catch {}
+          }
+          return {
+            result: {
+              actionClass: [],
+              connectOutStoreFields: []
+            },
+            hasCache: false
+          };
+        },
+        writeCache: data => {
+          fse.writeFileSync(CACHE_PATH, JSON.stringify(data, null, 2));
+        }
       });
     } else {
-      this._leActionManager.reset()
+      this._leActionManager.reset();
     }
   }
 
@@ -65,9 +95,9 @@ export default class LeStoreManager {
   }
 
   public run(context: vscode.ExtensionContext) {
-    context.subscriptions.push(this.loadProvider(
-      this._leActionManager.actionClass
-    ));
+    context.subscriptions.push(
+      this.loadProvider(this._leActionManager.actionClass)
+    );
   }
 
   constructor() {
