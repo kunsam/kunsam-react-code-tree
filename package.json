@@ -3,7 +3,7 @@
   "description": "vscode extension with tree provider tool for react app coder",
   "repository": "https://github.com/kunsam/kunsam-react-code-tree.git",
   "version": "0.28.0",
-  "icon": "https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/avatar.jpg",
+  "icon": "resources/avatar.jpg",
   "publisher": "kunsam",
   "engines": {
     "vscode": "^1.36.0"
@@ -240,13 +240,12 @@
     "@types/node": "^10.12.21",
     "@types/webpack": "^4.39.4",
     "ts-loader": "^6.2.0",
-    "typescript": "^3.6.4",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"
   },
   "dependencies": {
     "file-system": "^2.2.2",
-    "le-ts-code-tool": "^1.0.36",
+    "le-ts-code-tool": "^1.0.37",
     "lodash": "^4.17.15"
   }
 }
