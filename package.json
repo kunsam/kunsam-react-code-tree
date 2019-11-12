@@ -8,15 +8,16 @@
   "engines": {
     "vscode": "^1.36.0"
   },
+  "main": "./dist/extension.js",
   "categories": [
     "Other"
   ],
   "activationEvents": [
     "onView:kReactCodeTree",
+    "onCommand:extension.selectBracket",
     "onCommand:kReactCodeTree.gotoRelative",
-    "onCommand:extension.selectBracket"
+    "onCommand:kReactCodeTree.getKReactNodeCode"
   ],
-  "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -38,11 +39,7 @@
     "commands": [
       {
         "command": "kReactCodeTree.refresh",
-        "title": "Refresh WorkFlow",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "title": "刷新 Workflow"
       },
       {
         "command": "kReactCodeTree.insertAfter",
@@ -65,56 +62,8 @@
         "title": "Edit"
       },
       {
-        "command": "kReactRouterTree.SearchRouter",
-        "title": "Search Router"
-      },
-      {
-        "command": "extension.getKReactNodeCode",
+        "command": "kReactCodeTree.getKReactNodeCode",
         "title": "* Get kReactCodeTree Node Code"
-      },
-      {
-        "command": "extension.getFileAppUrl",
-        "title": "* Get File App Url"
-      },
-      {
-        "command": "kReactRouterTree.showFileParentsInPick",
-        "title": "show file parents"
-      },
-      {
-        "command": "kReactCodeTree.queryStoreManagedFields",
-        "title": "query Store Managed Fields"
-      },
-      {
-        "command": "kReactCodeTree.queryStoreConnectOutFields",
-        "title": "query Store ConnectOut Fields"
-      },
-      {
-        "command": "kReactCodeTree.queryStoreAllFields",
-        "title": "query Store All Fields"
-      },
-      {
-        "command": "kReactCodeTree.activeStoreManager",
-        "title": "激活 StoreManager"
-      },
-      {
-        "command": "kReactCodeTree.activeRouterManager",
-        "title": "激活 RouterManager"
-      },
-      {
-        "command": "kReactCodeTree.refreshStoreManager",
-        "title": "Refresh StoreManager"
-      },
-      {
-        "command": "kReactCodeTree.store.getActionClassOldActionId",
-        "title": "* Get ActionClass By OldAction ID"
-      },
-      {
-        "command": "kReactCodeTree.store.getActionClassByQueryString",
-        "title": "* Get ActionClass By Query String"
-      },
-      {
-        "command": "kReactCodeTree.store.getActionClassByQueryStringSimple",
-        "title": "* Get ActionClass By Query String[简单版]"
       }
     ],
     "keybindings": [
@@ -129,32 +78,6 @@
         "mac": "cmd+i cmd+i",
         "key": "ctrl+i ctrl+i",
         "when": "editorTextFocus"
-      },
-      {
-        "command": "kReactRouterTree.SearchRouter",
-        "mac": "cmd+o cmd+o",
-        "key": "ctrl+o ctrl+o"
-      },
-      {
-        "command": "kReactRouterTree.showFileParentsInPick",
-        "mac": "cmd+4 cmd+4",
-        "key": "ctrl+4 ctrl+4",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "kReactCodeTree.queryStoreManagedFields",
-        "mac": "cmd+o cmd+8",
-        "key": "ctrl+o ctrl+8"
-      },
-      {
-        "command": "kReactCodeTree.queryStoreConnectOutFields",
-        "mac": "cmd+o cmd+9",
-        "key": "ctrl+o ctrl+9"
-      },
-      {
-        "command": "kReactCodeTree.queryStoreAllFields",
-        "mac": "cmd+o cmd+0",
-        "key": "ctrl+o ctrl+0"
       }
     ],
     "menus": {
@@ -164,21 +87,6 @@
           "command": "kReactCodeTree.refresh",
           "when": "view == kReactCodeTree",
           "group": "myGroup@1"
-        },
-        {
-          "command": "kReactCodeTree.activeRouterManager",
-          "when": "view == kReactCodeTree",
-          "group": "myGroup@2"
-        },
-        {
-          "command": "kReactCodeTree.activeStoreManager",
-          "when": "view == kReactCodeTree",
-          "group": "myGroup@3"
-        },
-        {
-          "command": "kReactCodeTree.refreshStoreManager",
-          "when": "view == kReactCodeTree",
-          "group": "myGroup@4"
         }
       ],
       "view/item/context": [
@@ -198,28 +106,8 @@
       "editor/context": [
         {
           "when": "editorTextFocus",
-          "command": "extension.getKReactNodeCode",
-          "group": "navigation@6"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "extension.getFileAppUrl",
+          "command": "kReactCodeTree.getKReactNodeCode",
           "group": "navigation@5"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "kReactCodeTree.store.getActionClassOldActionId",
-          "group": "navigation@7"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "kReactCodeTree.store.getActionClassByQueryString",
-          "group": "navigation@8"
-        },
-        {
-          "when": "editorTextFocus",
-          "command": "kReactCodeTree.store.getActionClassByQueryStringSimple",
-          "group": "navigation@9"
         }
       ]
     },
@@ -240,12 +128,9 @@
     "@types/node": "^10.12.21",
     "@types/webpack": "^4.39.4",
     "ts-loader": "^6.2.0",
+    "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9"
   },
-  "dependencies": {
-    "file-system": "^2.2.2",
-    "le-ts-code-tool": "^1.0.37",
-    "lodash": "^4.17.15"
-  }
+  "dependencies": {}
 }

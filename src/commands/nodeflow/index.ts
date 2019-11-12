@@ -22,7 +22,7 @@ export default class NodeFlowCommands {
 
 		// 需要左边 kReactCodeTree 面板打开才执行
 		context.subscriptions.push(vscode.commands.registerCommand(
-			"extension.getKReactNodeCode",
+			"kReactCodeTree.getKReactNodeCode",
 			async () => {
 				const editor = vscode.window.activeTextEditor;
 				const node = await NodeFlowsUtil.getEditorCursorKReactFlowNode(editor)
