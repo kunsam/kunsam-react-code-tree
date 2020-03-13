@@ -33,10 +33,10 @@
 		- [(cmd + o) + (cmd + 9)] 查询数据字段供应链(注册、入库、出库列表)
 
 <p>
-	<img src="https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/example1.png" alt="场景业务流视图" />
-	<img src="https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/example2.png" alt="场景业务流视图" />
-	<img src="https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/example3.png" alt="场景业务流视图" />
-	<img src="https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/example4.png" alt="场景业务流视图" />
+	<img src="http://q7345qrap.bkt.clouddn.com/example1.png" alt="场景业务流视图" />
+	<img src="http://q7345qrap.bkt.clouddn.com/example2.png" alt="场景业务流视图" />
+	<img src="http://q7345qrap.bkt.clouddn.com/example3.png" alt="场景业务流视图" />
+	<img src="http://q7345qrap.bkt.clouddn.com/example4.png" alt="场景业务流视图" />
 </p>
 
 
@@ -51,7 +51,7 @@
 - 场景流数据对应数据结构为 ``KC_Node[]``
 - 在项目目录 ``{workspace}/__kReactCodeTree__/index.js`` 中输出 ``KC_Node[]``
 
-<img src="https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/exampe5.png" alt="场景业务流视图" />
+<img src="http://q7345qrap.bkt.clouddn.com/exampe5.png" alt="场景业务流视图" />
 
 ```js
 export type KC_Node = {
@@ -91,4 +91,4 @@ export type KC_Node = {
 ### 是否觉得很麻烦
 > KTree提供更方便的节点编辑方法
 
-<img src="https://raw.githubusercontent.com/kunsam/kunsam-react-code-tree/master/resources/example-gif1.gif" alt="场景业务流视图" />
+<img src="http://q7345qrap.bkt.clouddn.com/example-gif1.gif" alt="场景业务流视图" />
