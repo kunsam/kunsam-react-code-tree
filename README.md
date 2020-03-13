@@ -1,5 +1,10 @@
 > kunsam react code tree( KTree) 是一些 vscode 代码工具集
 
+# 使用
+```
+	vscode Extensions 中搜索 react code tree
+```
+
 # KTREE 的作用 简单来说
 
 - 方便找到代码节点 - 更利于维护一段代码比较分散的代码流碎片 - 更利于维护复杂的代码逻辑 - 提供快速跳转功能
